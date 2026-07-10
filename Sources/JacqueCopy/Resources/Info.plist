@@ -7,13 +7,13 @@
 	<key>CFBundleDisplayName</key>
 	<string>Jacque-Copy</string>
 	<key>CFBundleExecutable</key>
-	<string>$(EXECUTABLE_NAME)</string>
+	<string>JacqueCopy</string>
 	<key>CFBundleIdentifier</key>
-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<string>com.jacquecopy.JacqueCopy</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>$(PRODUCT_NAME)</string>
+	<string>JacqueCopy</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -39,7 +39,7 @@
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>SUFeedURL</key>
-	<string>https://github.com/jacquecopy/jacque-copy/releases/latest/download/appcast.xml</string>
+	<string>https://github.com/Johnnycarriere215/Multi-Copy/releases/latest/download/appcast.xml</string>
 	<key>SUEnableAutomaticChecks</key>
 	<true/>
 </dict>

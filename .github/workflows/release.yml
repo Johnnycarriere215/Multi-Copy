@@ -7,7 +7,6 @@ on:
 
 permissions:
   contents: write
-  packages: write
 
 jobs:
   release-macos:
@@ -21,90 +20,123 @@ jobs:
       - name: Select Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: "15.4"
+          xcode-version: latest-stable
+
+      - name: Show toolchain
+        run: |
+          swift --version
+          xcodebuild -version
 
       - name: Set Version
         id: version
         run: |
-          VERSION=${GITHUB_REF#refs/tags/v}
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "Building version $VERSION"
+          echo "version=${GITHUB_REF#refs/tags/v}" >> "$GITHUB_OUTPUT"
 
       - name: Resolve Dependencies
-        run: swift package resolve
+        run: |
+          set -o pipefail
+          swift package resolve 2>&1 | tee resolve.log || {
+            tail -n 60 resolve.log | while IFS= read -r l; do echo "::error::$l"; done
+            exit 1
+          }
 
       - name: Build Release (arm64)
         run: |
-          swift build \
-            --configuration release \
-            --arch arm64 \
-            --product JacqueCopy
+          set -o pipefail
+          swift build -c release --arch arm64 --product JacqueCopy 2>&1 | tee build-arm64.log || {
+            echo "::error::arm64 build failed — last 60 lines follow"
+            tail -n 60 build-arm64.log | while IFS= read -r l; do echo "::error::$l"; done
+            exit 1
+          }
 
       - name: Build Release (x86_64)
         run: |
-          swift build \
-            --configuration release \
-            --arch x86_64 \
-            --product JacqueCopy
+          set -o pipefail
+          swift build -c release --arch x86_64 --product JacqueCopy 2>&1 | tee build-x64.log || {
+            echo "::error::x86_64 build failed — last 60 lines follow"
+            tail -n 60 build-x64.log | while IFS= read -r l; do echo "::error::$l"; done
+            exit 1
+          }
 
-      - name: Create Universal Binary
+      - name: Assemble App Bundle
         run: |
-          mkdir -p build/universal
+          set -euo pipefail
+          APP="build/Jacque-Copy.app"
+          mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
+
+          # Universal (Intel + Apple Silicon) binary
           lipo -create \
-            .build/arm64-apple-macosx/release/JacqueCopy \
-            .build/x86_64-apple-macosx/release/JacqueCopy \
-            -output build/universal/JacqueCopy
+            ".build/arm64-apple-macosx/release/JacqueCopy" \
+            ".build/x86_64-apple-macosx/release/JacqueCopy" \
+            -output "$APP/Contents/MacOS/JacqueCopy"
+          chmod +x "$APP/Contents/MacOS/JacqueCopy"
 
-      - name: Create App Bundle
-        run: |
-          mkdir -p "build/JacqueCopy.app/Contents/MacOS"
-          mkdir -p "build/JacqueCopy.app/Contents/Resources"
-          cp build/universal/JacqueCopy "build/JacqueCopy.app/Contents/MacOS/"
-          cp Sources/JacqueCopy/Resources/Info.plist "build/JacqueCopy.app/Contents/"
+          cp "Sources/JacqueCopy/Resources/Info.plist" "$APP/Contents/Info.plist"
+
+          # SwiftPM-generated resource bundle (asset catalog etc.), if present
+          BUNDLE=".build/arm64-apple-macosx/release/JacqueCopy_JacqueCopy.bundle"
+          if [ -d "$BUNDLE" ]; then
+            cp -R "$BUNDLE" "$APP/Contents/Resources/"
+          fi
+
+          # Ad-hoc sign so the app can launch after the user allows it in Gatekeeper
+          codesign --force --deep --sign - "$APP" || echo "::warning::ad-hoc codesign failed (non-fatal)"
 
       - name: Create DMG
         run: |
+          set -euo pipefail
+          VERSION="${{ steps.version.outputs.version }}"
           brew install create-dmg
+          mkdir -p build/dmg-staging
+          cp -R "build/Jacque-Copy.app" build/dmg-staging/
+          # create-dmg occasionally returns non-zero even on success; treat the
+          # presence of the output file as the real success signal.
           create-dmg \
-            --window-pos 200 120 \
+            --volname "Jacque-Copy" \
             --window-size 600 400 \
             --icon-size 100 \
-            --icon "JacqueCopy.app" 150 190 \
-            --hide-extension "JacqueCopy.app" \
-            --app-drop-link 450 185 \
-            --volname "Jacque-Copy" \
-            "build/JacqueCopy-${{ steps.version.outputs.version }}.dmg" \
-            "build/JacqueCopy.app"
+            --icon "Jacque-Copy.app" 150 190 \
+            --app-drop-link 450 190 \
+            "build/JacqueCopy-${VERSION}.dmg" \
+            "build/dmg-staging" || echo "::warning::create-dmg exited non-zero; checking for output"
+          if [ ! -f "build/JacqueCopy-${VERSION}.dmg" ]; then
+            echo "::warning::DMG was not produced; the .zip asset will still be shipped"
+          fi
 
       - name: Create ZIP (macOS)
         run: |
+          set -euo pipefail
+          VERSION="${{ steps.version.outputs.version }}"
           cd build
           ditto -c -k --sequesterRsrc --keepParent \
-            "JacqueCopy.app" \
-            "JacqueCopy-${{ steps.version.outputs.version }}.zip"
-          cd ..
+            "Jacque-Copy.app" \
+            "JacqueCopy-${VERSION}.zip"
 
       - name: Generate Checksums
         run: |
+          set -euo pipefail
+          VERSION="${{ steps.version.outputs.version }}"
           cd build
-          shasum -a 256 \
-            "JacqueCopy-${{ steps.version.outputs.version }}.dmg" \
-            "JacqueCopy-${{ steps.version.outputs.version }}.zip" \
-            > SHA256SUMS.txt
-          cd ..
+          shopt -s nullglob
+          shasum -a 256 "JacqueCopy-${VERSION}.dmg" "JacqueCopy-${VERSION}.zip" > SHA256SUMS.txt || true
+          cat SHA256SUMS.txt || true
 
       - name: Upload macOS Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: macos-release-assets
+          if-no-files-found: warn
           path: |
-            build/JacqueCopy-${{ steps.version.outputs.version }}.dmg
-            build/JacqueCopy-${{ steps.version.outputs.version }}.zip
+            build/JacqueCopy-*.dmg
+            build/JacqueCopy-*.zip
             build/SHA256SUMS.txt
 
   release-windows:
     name: Create Windows Release
     runs-on: windows-latest
+    # The Windows build is not yet supported (the UI layer is SwiftUI). Keep it
+    # non-blocking so a successful macOS build can still publish the release.
+    continue-on-error: true
 
     steps:
       - name: Checkout
@@ -113,48 +145,40 @@ jobs:
       - name: Setup Swift
         uses: swift-actions/setup-swift@v2
         with:
-          swift-version: "5.9"
+          swift-version: "6.0"
 
       - name: Set Version
         id: version
         shell: bash
-        run: |
-          VERSION=${GITHUB_REF#refs/tags/v}
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "Building version $VERSION for Windows"
+        run: echo "version=${GITHUB_REF#refs/tags/v}" >> "$GITHUB_OUTPUT"
 
       - name: Build Release
         shell: bash
-        run: |
-          swift build \
-            --configuration release \
-            --product JacqueCopy
+        run: swift build --configuration release --product JacqueCopy
 
       - name: Create Windows ZIP
         shell: bash
         run: |
+          VERSION="${{ steps.version.outputs.version }}"
           mkdir -p build/windows
-          # Copy the built executable
           if [ -f ".build/release/JacqueCopy.exe" ]; then
             cp .build/release/JacqueCopy.exe build/windows/
           elif [ -f ".build/x86_64-unknown-windows-msvc/release/JacqueCopy.exe" ]; then
             cp .build/x86_64-unknown-windows-msvc/release/JacqueCopy.exe build/windows/
           fi
-          # Create ZIP
           cd build/windows
-          7z a "../JacqueCopy-${{ steps.version.outputs.version }}-windows.zip" *
+          7z a "../JacqueCopy-${VERSION}-windows.zip" *
           cd ../..
-          # Generate checksum
-          sha256sum "build/JacqueCopy-${{ steps.version.outputs.version }}-windows.zip" \
-            > "build/JacqueCopy-${{ steps.version.outputs.version }}-windows.zip.sha256"
+          sha256sum "build/JacqueCopy-${VERSION}-windows.zip" > "build/JacqueCopy-${VERSION}-windows.zip.sha256"
 
       - name: Upload Windows Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: windows-release-assets
+          if-no-files-found: ignore
           path: |
-            build/JacqueCopy-${{ steps.version.outputs.version }}-windows.zip
-            build/JacqueCopy-${{ steps.version.outputs.version }}-windows.zip.sha256
+            build/JacqueCopy-*-windows.zip
+            build/JacqueCopy-*-windows.zip.sha256
 
   create-release:
     name: Create GitHub Release
@@ -167,8 +191,7 @@ jobs:
 
       - name: Set Version
         id: version
-        run: |
-          echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+        run: echo "version=${GITHUB_REF#refs/tags/v}" >> "$GITHUB_OUTPUT"
 
       - name: Download macOS Artifacts
         uses: actions/download-artifact@v4
@@ -177,6 +200,7 @@ jobs:
           path: build/
 
       - name: Download Windows Artifacts
+        continue-on-error: true
         uses: actions/download-artifact@v4
         with:
           name: windows-release-assets
@@ -184,11 +208,13 @@ jobs:
 
       - name: Combine Checksums
         run: |
-          # Combine all checksums
-          cat build/SHA256SUMS.txt > build/SHA256SUMS-combined.txt
-          if [ -f "build/JacqueCopy-${{ steps.version.outputs.version }}-windows.zip.sha256" ]; then
-            cat "build/JacqueCopy-${{ steps.version.outputs.version }}-windows.zip.sha256" >> build/SHA256SUMS-combined.txt
-          fi
+          cd build
+          : > SHA256SUMS-combined.txt
+          [ -f SHA256SUMS.txt ] && cat SHA256SUMS.txt >> SHA256SUMS-combined.txt || true
+          for f in JacqueCopy-*-windows.zip.sha256; do
+            [ -f "$f" ] && cat "$f" >> SHA256SUMS-combined.txt || true
+          done
+          cat SHA256SUMS-combined.txt || true
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
@@ -197,11 +223,11 @@ jobs:
           body_path: Documentation/RELEASE_NOTES.md
           draft: true
           prerelease: false
-          generate_release_notes: true
+          fail_on_unmatched_files: false
           files: |
-            build/JacqueCopy-${{ steps.version.outputs.version }}.dmg
-            build/JacqueCopy-${{ steps.version.outputs.version }}.zip
-            build/JacqueCopy-${{ steps.version.outputs.version }}-windows.zip
+            build/JacqueCopy-*.dmg
+            build/JacqueCopy-*.zip
+            build/JacqueCopy-*-windows.zip
             build/SHA256SUMS-combined.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
