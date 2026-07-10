@@ -453,8 +453,9 @@ if (fs.existsSync(gitignore)) {
 // ============================================================
 logCheck("Documentation Files");
 
-const requiredDocs = [
-  "README.md",
+// README lives at project root, everything else in Documentation/
+const rootDocs = ["README.md"];
+const subDocs = [
   "ARCHITECTURE.md",
   "BUILD.md",
   "INSTALL.md",
@@ -467,7 +468,15 @@ const requiredDocs = [
   "RELEASE_NOTES.md",
 ];
 
-for (const doc of requiredDocs) {
+for (const doc of rootDocs) {
+  if (fs.existsSync(path.join(ROOT, doc))) {
+    ok(`${doc} exists at project root`);
+  } else {
+    error(`Missing root documentation: ${doc}`);
+  }
+}
+
+for (const doc of subDocs) {
   if (fs.existsSync(path.join(DOCS, doc))) {
     ok(`Documentation/${doc} exists`);
   } else {

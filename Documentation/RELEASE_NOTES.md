@@ -1,58 +1,142 @@
+<p align="center">
+  <img src="Resources/Assets.xcassets/AppIcon.appiconset/icon-256.png" width="96" height="96" alt="Jacque-Copy">
+</p>
+
 # Jacque-Copy v1.0.0
 
-## First Public Release
+<p align="center"><strong>First public release — a beautiful dual clipboard built specifically for macOS.</strong></p>
 
-The first stable release of Jacque-Copy — a beautiful dual clipboard built specifically for macOS.
-
-### Highlights
-
-- **True Dual Clipboard**: Two completely independent clipboards (A and B) that never interfere with each other
-- **Rich Content**: Preserves every pasteboard representation — text, RTF, HTML, images, files, URLs, and more
-- **Clipboard History**: Independent history for each clipboard with configurable size limits
-- **Pinned Items & Favorites**: Keep important items permanently accessible
-- **Instant Search**: Type to filter across both clipboards instantly
-- **Menu Bar App**: Clean, native macOS menu bar interface with clipboard previews
-- **Fully Customizable**: Configurable shortcuts, themes (including Black & Gold), accent colors, and animation speeds
-- **Performance**: Near-zero CPU usage, under 20 MB RAM, event-driven architecture
-
-### Default Shortcuts
-
-| Action | Shortcut |
-|--------|----------|
-| Copy (Clipboard A) | ⌘C |
-| Paste (Clipboard A) | ⌘V |
-| Copy to Clipboard B | ⌃C |
-| Paste from Clipboard B | ⌃V |
-| Toggle History | ⌘⇧V |
-
-### Requirements
-
-- macOS 14.0 (Sonoma) or later
-- Intel or Apple Silicon Mac
-- Accessibility permission (required for global hotkey interception)
-
-### Installation
-
-1. Download `JacqueCopy-1.0.0.dmg`
-2. Open the DMG
-3. Drag Jacque-Copy to Applications
-4. Launch and grant Accessibility permissions when prompted
-
-### Known Issues
-
-- First launch may require a restart for hotkeys to work after granting Accessibility permissions
-- Some custom pasteboard types from third-party apps may not be fully preserved
-- In rare cases, Ctrl+C may not capture content in apps with custom copy handlers
-
-### Checksums
-
-```
-JacqueCopy-1.0.0.dmg:
-JacqueCopy-1.0.0.zip:
-```
-
-*(Checksums will be populated with actual build artifacts)*
+<p align="center">
+  <a href="https://github.com/jacquecopy/jacque-copy/releases/download/v1.0.0/JacqueCopy-1.0.0.dmg">
+    <img src="https://img.shields.io/badge/%E2%AC%87%20Download%20DMG-macOS%2014%2B-%23D4A017?style=for-the-badge&logo=apple&logoColor=white&labelColor=1C1C1E" alt="Download DMG" height="40">
+  </a>
+  &nbsp;
+  <a href="https://github.com/jacquecopy/jacque-copy/releases/download/v1.0.0/JacqueCopy-1.0.0.zip">
+    <img src="https://img.shields.io/badge/%E2%AC%87%20Download%20ZIP-macOS%2014%2B-%23555557?style=for-the-badge&logo=apple&logoColor=white&labelColor=1C1C1E" alt="Download ZIP" height="40">
+  </a>
+</p>
 
 ---
 
-Built with ❤️ for macOS.
+## 📦 Download
+
+| Asset | Type | Size |
+|---|---|---|
+| **[JacqueCopy-1.0.0.dmg](https://github.com/jacquecopy/jacque-copy/releases/download/v1.0.0/JacqueCopy-1.0.0.dmg)** | Disk Image (Recommended) | *auto-generated* |
+| **[JacqueCopy-1.0.0.zip](https://github.com/jacquecopy/jacque-copy/releases/download/v1.0.0/JacqueCopy-1.0.0.zip)** | ZIP Archive | *auto-generated* |
+| [Source Code (.zip)](https://github.com/jacquecopy/jacque-copy/archive/refs/tags/v1.0.0.zip) | Source | *auto-generated* |
+| [Source Code (.tar.gz)](https://github.com/jacquecopy/jacque-copy/archive/refs/tags/v1.0.0.tar.gz) | Source | *auto-generated* |
+
+---
+
+## 🚀 Quick Install
+
+1. **Download** `JacqueCopy-1.0.0.dmg` above
+2. **Open** the DMG file
+3. **Drag** Jacque-Copy into your **Applications** folder
+4. **Launch** Jacque-Copy — it appears in your menu bar
+5. **Grant** Accessibility permission when prompted
+6. **Use** ⌃C to copy to Clipboard B, ⌃V to paste from it
+
+---
+
+## ✨ Highlights
+
+### 🔀 True Dual Clipboard
+Two completely independent clipboards. Clipboard A (⌘C/⌘V) works exactly like macOS always has. Clipboard B (⌃C/⌃V) is a fully separate clipboard that never overwrites A.
+
+### 🎨 Rich Content Preservation
+Preserves **every** pasteboard representation: plain text, rich text, RTF, HTML, Markdown, images (PNG, JPEG, TIFF, SVG), PDF, URLs, files, folders, Finder items, and custom types. Nothing is flattened to plain text.
+
+### 📋 Independent History
+Each clipboard has its own history with configurable size (10, 25, 50, 100, 250, or unlimited). History persists across reboots with smart deduplication.
+
+### 📌 Pinned Items & Favorites
+Pin important items to keep them permanently. Mark favorites for quick access. Search, sort, and filter across both clipboards instantly.
+
+### 🔍 Instant Search
+Type to filter — results appear immediately. Arrow keys navigate. Return pastes. Escape closes.
+
+### 🎛️ Fully Customizable
+- **Shortcuts**: All six hotkeys are configurable with a built-in recorder and conflict detection
+- **Themes**: System, Light, Dark, and **Black & Gold** (default)
+- **Accent Color**: Custom color picker
+- **Animation Speed**: Fast, Normal, or Slow
+
+### ⚡ Lightweight & Fast
+Near-zero idle CPU. Under 20 MB RAM. Event-driven architecture — no polling, no busy loops. Starts instantly.
+
+---
+
+## ⌨️ Default Shortcuts
+
+| Action | Shortcut |
+|---|---|
+| Copy (Clipboard A) | ⌘C |
+| Paste (Clipboard A) | ⌘V |
+| **Copy to Clipboard B** | **⌃C** |
+| **Paste from Clipboard B** | **⌃V** |
+| Toggle History Window | ⌘⇧V |
+| Show Menu Bar | ⌘⇧J |
+| Clear Clipboard B | ⌃⌥X |
+| Swap Clipboards | ⌃⌥S |
+
+All configurable in **Settings → Hotkeys**.
+
+---
+
+## 📋 Requirements
+
+| | |
+|---|---|
+| **macOS** | 14.0 (Sonoma) or later |
+| **CPU** | Intel (x86_64) or Apple Silicon (arm64) |
+| **Permissions** | Accessibility (for global hotkey interception) |
+
+---
+
+## 🔒 Security
+
+- **Local-only**: All clipboard data stored on your Mac — nothing sent over the network
+- **Sensitive data excluded**: Auto-filters password manager types and transient pasteboard data
+- **No analytics**: Zero telemetry, zero tracking
+- See [SECURITY.md](Documentation/SECURITY.md) for the full policy
+
+---
+
+## ⚠️ Known Issues
+
+- After granting Accessibility permission, you may need to quit and re-open Jacque-Copy for hotkeys to work
+- Some custom pasteboard types from third-party apps may not be fully preserved
+- In rare cases, apps with custom copy handlers may not work with Ctrl+C (fall back to ⌘C then swap clips)
+- Sparkle auto-update feed URL must be configured for your release server
+
+---
+
+## 🔍 Checksums
+
+```
+SHA-256:
+JacqueCopy-1.0.0.dmg  *(auto-generated at build time)*
+JacqueCopy-1.0.0.zip  *(auto-generated at build time)*
+```
+
+*Checksums are generated automatically by the CI release workflow and appended to `SHA256SUMS.txt` in the release assets.*
+
+---
+
+## 📚 Full Documentation
+
+- **[README.md](README.md)** — Project overview
+- **[INSTALL.md](Documentation/INSTALL.md)** — Detailed installation
+- **[BUILD.md](Documentation/BUILD.md)** — Build from source
+- **[ARCHITECTURE.md](Documentation/ARCHITECTURE.md)** — Architecture & data flow
+- **[FAQ.md](Documentation/FAQ.md)** — Frequently asked questions
+- **[CHANGELOG.md](Documentation/CHANGELOG.md)** — Version history
+- **[SECURITY.md](Documentation/SECURITY.md)** — Security policy
+
+---
+
+<p align="center">
+  <sub>Built with ❤️ for macOS · MIT Licensed · <a href="https://github.com/jacquecopy/jacque-copy">github.com/jacquecopy/jacque-copy</a></sub>
+</p>
