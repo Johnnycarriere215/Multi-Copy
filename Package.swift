@@ -30,20 +30,21 @@ let package = Package(
     ],
     dependencies: macDependencies,
     targets: [
-        // Win32 C interop bridge (compiles on all platforms, but is empty on non-Windows)
+        // Win32 C interop bridge. Its source is fully guarded by `#ifdef _WIN32`,
+        // so it compiles to an empty module on macOS. It lives in its own target
+        // directory so the Swift executable target is not "mixed language".
         .target(
             name: "Win32Bridge",
-            path: "Sources/JacqueCopy/Platform",
-            sources: ["win32_bridge.c"],
-            publicHeadersPath: ".",
+            path: "Sources/Win32Bridge",
+            publicHeadersPath: "include",
             cSettings: [
-                .define("UNICODE"),
-                .define("_UNICODE")
+                .define("UNICODE", .when(platforms: [.windows])),
+                .define("_UNICODE", .when(platforms: [.windows]))
             ],
             linkerSettings: [
-                .linkedLibrary("user32"),
-                .linkedLibrary("shell32"),
-                .linkedLibrary("ole32")
+                .linkedLibrary("user32", .when(platforms: [.windows])),
+                .linkedLibrary("shell32", .when(platforms: [.windows])),
+                .linkedLibrary("ole32", .when(platforms: [.windows]))
             ]
         ),
         // Main executable target
@@ -53,9 +54,10 @@ let package = Package(
                 .target(name: "Win32Bridge")
             ],
             path: "Sources/JacqueCopy",
-            resources: [
-                .process("Resources")
-            ],
+            // Info.plist / entitlements are consumed by the app-bundling step in
+            // CI, not by SwiftPM. Excluding them avoids the "Info.plist is not
+            // supported as a top-level resource" build error.
+            exclude: ["Resources"],
             swiftSettings: [
                 .define("SWIFT_PACKAGE")
             ]
