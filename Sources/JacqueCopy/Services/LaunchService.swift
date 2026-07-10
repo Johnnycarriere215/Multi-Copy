@@ -3,8 +3,10 @@
 // Copyright (c) 2024 Jacque-Copy Contributors
 
 import Foundation
+#if os(macOS)
 import ServiceManagement
-import UserNotifications
+import AppKit
+#endif
 
 /// Manages launch-at-login functionality using the modern SMAppService API.
 public final class LaunchService: ObservableObject {
@@ -22,10 +24,12 @@ public final class LaunchService: ObservableObject {
         }
     }
 
-    /// Whether the app should show in the Dock.
+    /// Whether the app should show in the Dock (macOS only).
     @Published public var showDockIcon: Bool {
         didSet {
+            #if os(macOS)
             updateDockVisibility()
+            #endif
         }
     }
 
@@ -41,32 +45,36 @@ public final class LaunchService: ObservableObject {
             defaultValue: false
         )
 
+        #if os(macOS)
         // Sync initial state
         if launchAtLogin {
             try? SMAppService.mainApp.register()
         } else {
             try? SMAppService.mainApp.unregister()
         }
+        #endif
     }
 
     // MARK: - Private Methods
 
     private func setLaunchAtLogin(_ enabled: Bool) {
+        #if os(macOS)
         do {
             if enabled {
                 try SMAppService.mainApp.register()
             } else {
                 try SMAppService.mainApp.unregister()
             }
-            UserDefaults.standard.set(enabled, forKey: "launchAtLogin")
         } catch {
-            // Log the error but don't crash - the user can enable manually
             #if DEBUG
             print("Failed to update launch at login: \(error.localizedDescription)")
             #endif
         }
+        #endif
+        UserDefaults.standard.set(enabled, forKey: "launchAtLogin")
     }
 
+    #if os(macOS)
     private func updateDockVisibility() {
         if showDockIcon {
             NSApplication.shared.setActivationPolicy(.regular)
@@ -75,4 +83,5 @@ public final class LaunchService: ObservableObject {
         }
         UserDefaults.standard.set(showDockIcon, forKey: "showDockIcon")
     }
+    #endif
 }

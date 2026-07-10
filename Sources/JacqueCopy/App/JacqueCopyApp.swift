@@ -3,14 +3,18 @@
 // Copyright (c) 2024 Jacque-Copy Contributors
 
 import SwiftUI
+#if os(macOS)
 import AppKit
 import KeyboardShortcuts
+#endif
 
-/// Main entry point for the Jacque-Copy application.
+/// Main entry point for the Jacque-Copy application on macOS.
 ///
 /// This is a menu bar-only application that provides a dual clipboard system.
 /// The app uses SwiftUI for the UI layer with AppKit integration for
 /// pasteboard operations, event taps, and system integration.
+/// On Windows, see WindowsApp.swift for the system tray entry point.
+#if os(macOS)
 @main
 struct JacqueCopyApp: App {
 
@@ -48,9 +52,12 @@ struct JacqueCopyApp: App {
     }
 }
 
+#endif // os(macOS)
+
 // MARK: - Menu Bar Icon
 
 /// Custom menu bar icon with gold accent that reflects clipboard state.
+#if os(macOS)
 struct MenuBarIconView: View {
     @EnvironmentObject var clipboardEngine: ClipboardEngine
 
@@ -70,9 +77,11 @@ struct MenuBarIconView: View {
         }
     }
 }
+#endif
 
 // MARK: - App Delegate
 
+#if os(macOS)
 final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private var hotkeyManager = HotkeyManager.shared
@@ -119,7 +128,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             NSApplication.shared.setActivationPolicy(.accessory)
         }
 
-        // Prevent app from appearing in the cmd+tab switcher
         NSApplication.shared.setActivationPolicy(.accessory)
     }
 
@@ -140,44 +148,33 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     // MARK: - Keyboard Shortcuts
 
     private func setupKeyboardShortcuts() {
-        // Ctrl+C handler is managed by CGEventTap (HotkeyManager)
-        // Ctrl+V handler is managed by CGEventTap (HotkeyManager)
-
-        // Toggle history window
         KeyboardShortcuts.onKeyDown(for: .toggleHistoryWindow) { [weak self] in
-            // Post notification to show history window
             NotificationCenter.default.post(
                 name: .showHistoryWindow,
                 object: nil
             )
         }
 
-        // Show menu bar popover
         KeyboardShortcuts.onKeyDown(for: .showMenuBarPopover) {
             // The menu bar extra handles this naturally
         }
 
-        // Clear Clipboard B
         KeyboardShortcuts.onKeyDown(for: .clearClipboardB) { [weak self] in
             self?.clipboardEngine.clearClipboardB()
             NotificationService.shared.notifyHistoryCleared(clipboard: .secondary)
         }
 
-        // Swap clipboards
         KeyboardShortcuts.onKeyDown(for: .swapClipboards) { [weak self] in
             self?.clipboardEngine.swapClipboards()
             NotificationService.shared.notifyClipboardSwap()
         }
     }
 
-    // MARK: - Reopen Handler
-
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
-        // Prevent default dock click behavior
         return false
     }
 }
-
+#endif
 // MARK: - Notification Names
 
 extension Notification.Name {

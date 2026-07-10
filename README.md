@@ -7,12 +7,13 @@
 
 <h1 align="center">Jacque-Copy</h1>
 
-<p align="center"><strong>A beautiful dual clipboard built specifically for macOS.</strong></p>
+<p align="center"><strong>A beautiful dual clipboard built for macOS and Windows.</strong></p>
 
 <p align="center">
   <a href="https://github.com/jacquecopy/jacque-copy/releases/latest"><img src="https://img.shields.io/github/v/release/jacquecopy/jacque-copy?color=%23D4A017&style=for-the-badge" alt="Latest Release"></a>
   <a href="https://github.com/jacquecopy/jacque-copy/blob/main/LICENSE"><img src="https://img.shields.io/github/license/jacquecopy/jacque-copy?color=%23D4A017&style=for-the-badge" alt="MIT License"></a>
   <img src="https://img.shields.io/badge/macOS-14%2B-%23D4A017?style=for-the-badge" alt="macOS 14+">
+  <img src="https://img.shields.io/badge/Windows-10%2B-%23D4A017?style=for-the-badge" alt="Windows 10+">
   <a href="https://github.com/jacquecopy/jacque-copy/actions"><img src="https://img.shields.io/github/actions/workflow/status/jacquecopy/jacque-copy/build.yml?style=for-the-badge" alt="Build"></a>
 </p>
 
@@ -25,53 +26,44 @@
 </p>
 
 <p align="center">
-  <sub>Requires macOS 14 (Sonoma) or later &nbsp;·&nbsp; Intel &amp; Apple Silicon &nbsp;·&nbsp; Free &amp; Open Source</sub>
+  <sub>macOS 14+ &nbsp;·&nbsp; Windows 10+ &nbsp;·&nbsp; Intel &amp; Apple Silicon &nbsp;·&nbsp; x64 &amp; ARM64 &nbsp;·&nbsp; Free &amp; Open Source</sub>
 </p>
 
 ---
 
 ## What is Jacque-Copy?
 
-macOS gives you **one** system clipboard. Jacque-Copy gives you a **second**, completely independent one.
+Your operating system gives you **one** system clipboard. Jacque-Copy gives you a **second**, completely independent one.
 
 This is not clipboard history. Not multiple tabs. Not categories. **It's literally another clipboard.**
 
-| Clipboard A | Clipboard B |
-|:---:|:---:|
-| Your normal system clipboard | A fully independent secondary clipboard |
-| ⌘C to copy &nbsp;·&nbsp; ⌘V to paste | ⌃C to copy &nbsp;·&nbsp; ⌃V to paste |
-| **Nothing changes** — macOS works exactly as before | **Never overwrites** Clipboard A |
+| | macOS | Windows |
+|---|---|---|
+| Clipboard A | ⌘C / ⌘V | Ctrl+C / Ctrl+V |
+| Clipboard B | ⌃C / ⌃V | **Alt+C / Alt+V** |
+| **Nothing changes** — your OS works exactly as before | | |
 
-> Copy `Apple` with ⌘C, then copy `Orange` with ⌃C. Press ⌘V → you get `Apple`. Press ⌃V → you get `Orange`. Neither clipboard ever destroys the other.
+> Copy `Apple` with Ctrl+C, then copy `Orange` with Alt+C. Press Ctrl+V → you get `Apple`. Press Alt+V → you get `Orange`. Neither clipboard ever destroys the other.
 
 ---
 
 ## 🚀 Quick Start
 
-### 1. Download
+### macOS
 
 **[→ Download the latest DMG from GitHub Releases](https://github.com/jacquecopy/jacque-copy/releases/latest)**
 
-Get `JacqueCopy-*.dmg` from the latest release.
+Get `JacqueCopy-*.dmg` from the latest release. Open the DMG, drag to Applications, launch. Grant Accessibility permission when prompted.
 
-### 2. Install
+Use **⌃C** to copy to Clipboard B and **⌃V** to paste from it.
 
-Open the DMG and drag **Jacque-Copy** into your **Applications** folder.
+### Windows
 
-### 3. Launch
+**[→ Download the latest Windows release](https://github.com/jacquecopy/jacque-copy/releases/latest)**
 
-Launch Jacque-Copy from Applications. It appears in your menu bar — look for the clipboard icon with a gold accent.
+Get `JacqueCopy-*-windows.zip` from the latest release. Extract and run `JacqueCopy.exe`. The app runs from the system tray.
 
-### 4. Grant Permission
-
-On first launch, grant **Accessibility** permission when prompted (System Settings → Privacy & Security → Accessibility). This is required for the secondary clipboard hotkeys.
-
-### 5. Use It
-
-- **⌃C** — Copy to Clipboard B
-- **⌃V** — Paste from Clipboard B
-
-That's it. You now have two clipboards.
+Use **Alt+C** to copy to Clipboard B and **Alt+V** to paste from it.
 
 ---
 
@@ -113,9 +105,11 @@ Zero idle CPU. Under 20 MB RAM. Event-driven — no polling, no busy loops. Nati
 
 ## ⌨️ Default Shortcuts
 
+### macOS
+
 | Action | Shortcut | Description |
 |---|---|---|
-| Copy (Clipboard A) | ⌘C | Normal macOS copy — nothing changes |
+| Copy (Clipboard A) | ⌘C | Normal macOS copy |
 | Paste (Clipboard A) | ⌘V | Normal macOS paste |
 | **Copy to B** | **⌃C** | Copy selected content to secondary clipboard |
 | **Paste from B** | **⌃V** | Paste secondary clipboard content |
@@ -124,7 +118,16 @@ Zero idle CPU. Under 20 MB RAM. Event-driven — no polling, no busy loops. Nati
 | Clear Clipboard B | ⌃⌥X | Wipe the secondary clipboard |
 | Swap Clipboards | ⌃⌥S | Exchange contents of A and B |
 
-*All shortcuts can be customized in **Settings → Hotkeys**.*
+### Windows
+
+| Action | Shortcut | Description |
+|---|---|---|
+| Copy (Clipboard A) | Ctrl+C | Normal Windows copy |
+| Paste (Clipboard A) | Ctrl+V | Normal Windows paste |
+| **Copy to B** | **Alt+C** | Copy selected content to secondary clipboard |
+| **Paste from B** | **Alt+V** | Paste secondary clipboard content |
+| Clear Clipboard B | Ctrl+Alt+X | Wipe the secondary clipboard |
+| Swap Clipboards | Ctrl+Alt+S | Exchange contents of A and B |
 
 ---
 
@@ -132,9 +135,12 @@ Zero idle CPU. Under 20 MB RAM. Event-driven — no polling, no busy loops. Nati
 
 ### Option 1: Download (Recommended)
 
-**[→ Get the latest release](https://github.com/jacquecopy/jacque-copy/releases/latest)** — download the DMG, drag to Applications, done.
+**[→ Get the latest release](https://github.com/jacquecopy/jacque-copy/releases/latest)**
 
-### Option 2: Homebrew *(coming soon)*
+- **macOS**: Download the DMG, drag to Applications, done.
+- **Windows**: Download the ZIP, extract, run `JacqueCopy.exe`.
+
+### Option 2: Homebrew *(macOS, coming soon)*
 
 ```bash
 brew install --cask jacque-copy
@@ -145,8 +151,13 @@ brew install --cask jacque-copy
 ```bash
 git clone https://github.com/jacquecopy/jacque-copy.git
 cd jacque-copy
+
+# macOS
 xed .                         # open in Xcode
 swift build -c release        # or build from command line
+
+# Windows
+swift build -c release        # requires Swift for Windows
 ```
 
 See [BUILD.md](Documentation/BUILD.md) for detailed instructions including signing and notarization.
@@ -155,11 +166,11 @@ See [BUILD.md](Documentation/BUILD.md) for detailed instructions including signi
 
 ## 📋 Requirements
 
-| | |
-|---|---|
-| **macOS** | 14.0 (Sonoma) or later |
-| **CPU** | Intel (x86_64) or Apple Silicon (arm64) |
-| **Permission** | Accessibility (required for secondary clipboard hotkeys) |
+| | macOS | Windows |
+|---|---|---|
+| **OS** | 14.0 (Sonoma) or later | 10 (1809) or later |
+| **CPU** | Intel (x86_64) or Apple Silicon (arm64) | x64 or ARM64 |
+| **Permission** | Accessibility (for hotkey interception) | None required |
 
 ---
 
@@ -206,5 +217,5 @@ Jacque-Copy is [MIT licensed](LICENSE). Free, open source, forever.
 ---
 
 <p align="center">
-  <sub>Built with ❤️ for macOS &nbsp;·&nbsp; Not affiliated with Apple Inc.</sub>
+  <sub>Built with ❤️ for macOS &amp; Windows &nbsp;·&nbsp; Not affiliated with Apple Inc. or Microsoft.</sub>
 </p>

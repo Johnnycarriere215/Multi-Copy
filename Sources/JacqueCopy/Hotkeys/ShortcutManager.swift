@@ -3,12 +3,15 @@
 // Copyright (c) 2024 Jacque-Copy Contributors
 
 import Foundation
+#if os(macOS)
 import KeyboardShortcuts
+#endif
 
 /// Defines all configurable keyboard shortcuts for Jacque-Copy.
 ///
-/// Each shortcut is stored in UserDefaults via the KeyboardShortcuts library
-/// and can be customized by the user through the Settings UI.
+/// On macOS, shortcuts use KeyboardShortcuts library for persistence.
+/// On Windows, defaults are hardcoded: Alt+C (copy) and Alt+V (paste).
+#if os(macOS)
 extension KeyboardShortcuts.Name {
 
     /// Copy to Clipboard B. Default: Control-C
@@ -47,6 +50,7 @@ extension KeyboardShortcuts.Name {
         default: .init(.s, modifiers: [.control, .option])
     )
 }
+#endif
 
 /// Manages all keyboard shortcut configuration for the application.
 public final class ShortcutManager: ObservableObject {
@@ -73,15 +77,38 @@ public final class ShortcutManager: ObservableObject {
     // MARK: - Public Methods
 
     /// Returns the current shortcut for copying to Clipboard B.
+    #if os(macOS)
     public var copyToClipboardBShortcut: KeyboardShortcuts.Shortcut? {
         KeyboardShortcuts.getShortcut(for: .copyToClipboardB)
     }
+    #endif
 
     /// Returns the current shortcut for pasting from Clipboard B.
+    #if os(macOS)
     public var pasteFromClipboardBShortcut: KeyboardShortcuts.Shortcut? {
         KeyboardShortcuts.getShortcut(for: .pasteFromClipboardB)
     }
+    #endif
 
+    /// Returns a human-readable description of the shortcut for Clipboard B copy.
+    public var copyToClipboardBDescription: String {
+        #if os(Windows)
+        return PlatformServices.defaultCopyShortcutDescription
+        #else
+        return copyToClipboardBShortcut?.description ?? "Not set"
+        #endif
+    }
+
+    /// Returns a human-readable description of the shortcut for Clipboard B paste.
+    public var pasteFromClipboardBDescription: String {
+        #if os(Windows)
+        return PlatformServices.defaultPasteShortcutDescription
+        #else
+        return pasteFromClipboardBShortcut?.description ?? "Not set"
+        #endif
+    }
+
+    #if os(macOS)
     /// Resets all shortcuts to their default values.
     public func resetAllToDefaults() {
         KeyboardShortcuts.reset(.copyToClipboardB)
@@ -97,32 +124,23 @@ public final class ShortcutManager: ObservableObject {
         KeyboardShortcuts.setShortcut(nil, for: name)
     }
 
-    /// Returns a human-readable description of the shortcut for Clipboard B copy.
-    public var copyToClipboardBDescription: String {
-        copyToClipboardBShortcut?.description ?? "Not set"
-    }
-
-    /// Returns a human-readable description of the shortcut for Clipboard B paste.
-    public var pasteFromClipboardBDescription: String {
-        pasteFromClipboardBShortcut?.description ?? "Not set"
-    }
-
     /// Checks if a key combination conflicts with macOS reserved shortcuts.
     public static func isReservedShortcut(key: KeyboardShortcuts.Key, modifiers: NSEvent.ModifierFlags) -> Bool {
         let reservedCombinations: Set<String> = [
-            "⌘Space", "⌘⇧Space",  // Spotlight
-            "⌘⇧3", "⌘⇧4", "⌘⇧5",  // Screenshots
-            "⌃⌘Q",                  // Lock Screen
-            "⌥⌘Esc",               // Force Quit
-            "⌃⇧Power",             // Sleep
+            "\u{2318}Space", "\u{2318}\u{21E7}Space",  // Spotlight
+            "\u{2318}\u{21E7}3", "\u{2318}\u{21E7}4", "\u{2318}\u{21E7}5",  // Screenshots
+            "\u{2303}\u{2318}Q",                  // Lock Screen
+            "\u{2325}\u{2318}Esc",               // Force Quit
+            "\u{2303}\u{21E7}Power",             // Sleep
         ]
 
         let description = "\(modifiers.description)\(key.description)"
         return reservedCombinations.contains(where: { description.contains($0) })
     }
+    #else
+    /// Resets all shortcuts to their default values (Windows: Alt+C / Alt+V).
+    public func resetAllToDefaults() {
+        // Windows uses hardcoded Alt+C/V
+    }
+    #endif
 }
-
-// MARK: - UserDefaults Convenience (defined in FoundationExtensions)
-
-// Note: UserDefaults convenience methods are defined in FoundationExtensions.swift
-// to avoid duplication across the codebase.

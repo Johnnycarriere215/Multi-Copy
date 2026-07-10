@@ -10,8 +10,8 @@ permissions:
   packages: write
 
 jobs:
-  release:
-    name: Create Release
+  release-macos:
+    name: Create macOS Release
     runs-on: macos-14
 
     steps:
@@ -76,7 +76,7 @@ jobs:
             "build/JacqueCopy-${{ steps.version.outputs.version }}.dmg" \
             "build/JacqueCopy.app"
 
-      - name: Create ZIP
+      - name: Create ZIP (macOS)
         run: |
           cd build
           ditto -c -k --sequesterRsrc --keepParent \
@@ -93,6 +93,103 @@ jobs:
             > SHA256SUMS.txt
           cd ..
 
+      - name: Upload macOS Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-release-assets
+          path: |
+            build/JacqueCopy-${{ steps.version.outputs.version }}.dmg
+            build/JacqueCopy-${{ steps.version.outputs.version }}.zip
+            build/SHA256SUMS.txt
+
+  release-windows:
+    name: Create Windows Release
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Swift
+        uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: "5.9"
+
+      - name: Set Version
+        id: version
+        shell: bash
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Building version $VERSION for Windows"
+
+      - name: Build Release
+        shell: bash
+        run: |
+          swift build \
+            --configuration release \
+            --product JacqueCopy
+
+      - name: Create Windows ZIP
+        shell: bash
+        run: |
+          mkdir -p build/windows
+          # Copy the built executable
+          if [ -f ".build/release/JacqueCopy.exe" ]; then
+            cp .build/release/JacqueCopy.exe build/windows/
+          elif [ -f ".build/x86_64-unknown-windows-msvc/release/JacqueCopy.exe" ]; then
+            cp .build/x86_64-unknown-windows-msvc/release/JacqueCopy.exe build/windows/
+          fi
+          # Create ZIP
+          cd build/windows
+          7z a "../JacqueCopy-${{ steps.version.outputs.version }}-windows.zip" *
+          cd ../..
+          # Generate checksum
+          sha256sum "build/JacqueCopy-${{ steps.version.outputs.version }}-windows.zip" \
+            > "build/JacqueCopy-${{ steps.version.outputs.version }}-windows.zip.sha256"
+
+      - name: Upload Windows Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-release-assets
+          path: |
+            build/JacqueCopy-${{ steps.version.outputs.version }}-windows.zip
+            build/JacqueCopy-${{ steps.version.outputs.version }}-windows.zip.sha256
+
+  create-release:
+    name: Create GitHub Release
+    needs: [release-macos, release-windows]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set Version
+        id: version
+        run: |
+          echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Download macOS Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: macos-release-assets
+          path: build/
+
+      - name: Download Windows Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: windows-release-assets
+          path: build/
+
+      - name: Combine Checksums
+        run: |
+          # Combine all checksums
+          cat build/SHA256SUMS.txt > build/SHA256SUMS-combined.txt
+          if [ -f "build/JacqueCopy-${{ steps.version.outputs.version }}-windows.zip.sha256" ]; then
+            cat "build/JacqueCopy-${{ steps.version.outputs.version }}-windows.zip.sha256" >> build/SHA256SUMS-combined.txt
+          fi
+
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
@@ -104,6 +201,7 @@ jobs:
           files: |
             build/JacqueCopy-${{ steps.version.outputs.version }}.dmg
             build/JacqueCopy-${{ steps.version.outputs.version }}.zip
-            build/SHA256SUMS.txt
+            build/JacqueCopy-${{ steps.version.outputs.version }}-windows.zip
+            build/SHA256SUMS-combined.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

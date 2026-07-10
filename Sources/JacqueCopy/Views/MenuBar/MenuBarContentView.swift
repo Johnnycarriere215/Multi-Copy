@@ -8,6 +8,8 @@ import SwiftUI
 ///
 /// Provides quick access to both clipboards, recent history, pinned items,
 /// search, settings, and other app functions.
+/// macOS only - not available on Windows (system tray app).
+#if os(macOS)
 struct MenuBarContentView: View {
 
     // MARK: - Environment
@@ -426,8 +428,11 @@ enum MenuTab: String, CaseIterable, Identifiable {
     }
 }
 
+#endif // os(macOS)
+
 // MARK: - Visual Effect Background
 
+#if os(macOS)
 /// AppKit NSVisualEffectView wrapper for SwiftUI.
 struct VisualEffectView: NSViewRepresentable {
     let material: NSVisualEffectView.Material
@@ -447,3 +452,4 @@ struct VisualEffectView: NSViewRepresentable {
         nsView.blendingMode = blendingMode
     }
 }
+#endif

@@ -3,12 +3,13 @@
 // Copyright (c) 2024 Jacque-Copy Contributors
 
 import SwiftUI
+#if os(macOS)
 import Sparkle
+#endif
 
-/// Manages application updates via the Sparkle framework.
+/// Manages application updates via the Sparkle framework (macOS only).
 ///
-/// This view is embedded in the Settings window to provide
-/// automatic update checking and installation.
+/// On Windows, updates are checked manually via GitHub releases.
 public final class UpdateChecker: ObservableObject {
 
     // MARK: - Published Properties
@@ -22,13 +23,14 @@ public final class UpdateChecker: ObservableObject {
     /// The latest available version string.
     @Published public private(set) var latestVersion: String?
 
-    /// Whether the app can check for updates (Sparkle configured).
+    /// Whether the app can check for updates.
     @Published public private(set) var canCheckForUpdates: Bool = false
 
     // MARK: - Singleton
 
     public static let shared = UpdateChecker()
 
+    #if os(macOS)
     // MARK: - Properties
 
     private let updaterController: SPUStandardUpdaterController
@@ -47,6 +49,7 @@ public final class UpdateChecker: ObservableObject {
 
     // MARK: - Public Methods
 
+    #if os(macOS)
     /// Triggers a manual check for updates.
     public func checkForUpdates() {
         isCheckingForUpdates = true
@@ -61,6 +64,22 @@ public final class UpdateChecker: ObservableObject {
     public var updater: SPUStandardUpdaterController {
         updaterController
     }
+    #else
+    /// On Windows, opens the GitHub releases page.
+    public func checkForUpdates() {
+        isCheckingForUpdates = true
+        // Open GitHub releases in default browser
+        #if os(Windows)
+        if let url = URL(string: "https://github.com/jacquecopy/jacque-copy/releases/latest") {
+            // On Windows, we'd use ShellExecute, but for now just note it
+            print("Check for updates at: \(url.absoluteString)")
+        }
+        #endif
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+            self?.isCheckingForUpdates = false
+        }
+    }
+    #endif
 }
 
 /// Sparkle updater settings view for embedding in SwiftUI.

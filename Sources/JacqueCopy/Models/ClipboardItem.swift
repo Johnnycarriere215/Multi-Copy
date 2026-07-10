@@ -21,7 +21,9 @@
 // SOFTWARE.
 
 import Foundation
+#if os(macOS)
 import AppKit
+#endif
 
 /// Represents a single clipboard item with all available pasteboard representations preserved.
 ///
@@ -136,8 +138,9 @@ public struct ClipboardItem: Identifiable, Codable, Equatable, Hashable {
 
     /// Returns the plain text representation, if available.
     public var plainText: String? {
-        guard let data = representations[NSPasteboard.PasteboardType.string.rawValue] ??
-                representations["public.utf8-plain-text"] else {
+        guard let data = representations["public.utf8-plain-text"] ??
+                representations["CF_TEXT"] ??
+                representations["CF_UNICODETEXT"] else {
             return nil
         }
         return String(data: data, encoding: .utf8)
@@ -145,60 +148,102 @@ public struct ClipboardItem: Identifiable, Codable, Equatable, Hashable {
 
     /// Returns the RTF representation, if available.
     public var rtfData: Data? {
-        representations[NSPasteboard.PasteboardType.rtf.rawValue]
+        #if os(macOS)
+        return representations[NSPasteboard.PasteboardType.rtf.rawValue]
+        #else
+        return representations["public.rtf"] ?? representations["Rich Text Format"]
+        #endif
     }
 
     /// Returns the HTML representation, if available.
     public var htmlString: String? {
-        guard let data = representations[NSPasteboard.PasteboardType.html.rawValue] else {
-            return nil
-        }
+        #if os(macOS)
+        guard let data = representations[NSPasteboard.PasteboardType.html.rawValue] else { return nil }
+        #else
+        guard let data = representations["public.html"] ?? representations["HTML Format"] else { return nil }
+        #endif
         return String(data: data, encoding: .utf8)
     }
 
     /// Returns the TIFF representation, if available.
     public var tiffData: Data? {
-        representations[NSPasteboard.PasteboardType.tiff.rawValue]
+        #if os(macOS)
+        return representations[NSPasteboard.PasteboardType.tiff.rawValue]
+        #else
+        return representations["CF_TIFF"] ?? representations["public.tiff"]
+        #endif
     }
 
     /// Returns the PNG representation, if available.
     public var pngData: Data? {
-        representations[NSPasteboard.PasteboardType.png.rawValue]
+        #if os(macOS)
+        return representations[NSPasteboard.PasteboardType.png.rawValue]
+        #else
+        return representations["public.png"] ?? representations["PNG"]
+        #endif
     }
 
     /// Returns the file URL if this item represents a file/folder reference.
     public var fileURL: URL? {
-        guard let data = representations[NSPasteboard.PasteboardType.fileURL.rawValue],
-              let url = URL(dataRepresentation: data, relativeTo: nil) else {
-            return nil
+        #if os(macOS)
+        if let data = representations[NSPasteboard.PasteboardType.fileURL.rawValue],
+           let url = URL(dataRepresentation: data, relativeTo: nil) {
+            return url
         }
-        return url
+        #else
+        if let data = representations["CF_HDROP"],
+           let urlString = String(data: data, encoding: .utf8) {
+            return URL(fileURLWithPath: urlString)
+        }
+        #endif
+        return nil
     }
 
     /// Generates a smart preview string based on available representations.
     public static func generatePreview(from representations: [String: Data]) -> String {
         // Try plain text first
-        if let textData = representations[NSPasteboard.PasteboardType.string.rawValue] ??
-            representations["public.utf8-plain-text"],
+        let textKey = "public.utf8-plain-text"
+        if let textData = representations[textKey] ?? representations["CF_TEXT"] ?? representations["CF_UNICODETEXT"],
            let text = String(data: textData, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) {
             let preview = text.replacingOccurrences(of: "\n", with: " ")
             return String(preview.prefix(200))
         }
 
         // Try RTF
+        #if os(macOS)
         if let rtfData = representations[NSPasteboard.PasteboardType.rtf.rawValue],
            let attributed = NSAttributedString(rtf: rtfData, documentAttributes: nil) {
             let preview = attributed.string.replacingOccurrences(of: "\n", with: " ")
             return String(preview.prefix(200))
         }
+        #else
+        if let rtfData = representations["public.rtf"] ?? representations["Rich Text Format"],
+           let text = String(data: rtfData, encoding: .utf8) {
+            // Simple RTF text extraction for Windows
+            let stripped = text.replacingOccurrences(of: "\\[a-z]+", with: "", options: .regularExpression)
+                .replacingOccurrences(of: "{", with: "")
+                .replacingOccurrences(of: "}", with: "")
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            return String(stripped.prefix(200))
+        }
+        #endif
 
         // Try file URL
+        #if os(macOS)
         if let data = representations[NSPasteboard.PasteboardType.fileURL.rawValue],
            let url = URL(dataRepresentation: data, relativeTo: nil) {
             return url.lastPathComponent
         }
+        #else
+        if let data = representations["CF_HDROP"],
+           let path = String(data: data, encoding: .utf8) {
+            let url = URL(fileURLWithPath: path)
+            return url.lastPathComponent
+        }
+        #endif
 
         // Try image
+        #if os(macOS)
         if representations[NSPasteboard.PasteboardType.tiff.rawValue] != nil ||
             representations[NSPasteboard.PasteboardType.png.rawValue] != nil {
             if let tiffData = representations[NSPasteboard.PasteboardType.tiff.rawValue],
@@ -207,9 +252,22 @@ public struct ClipboardItem: Identifiable, Codable, Equatable, Hashable {
             }
             return "Image"
         }
+        #else
+        if representations["CF_TIFF"] != nil || representations["CF_DIB"] != nil || representations["CF_BITMAP"] != nil {
+            if let _ = representations["CF_DIB"] {
+                return "Image (Bitmap)"
+            }
+            return "Image"
+        }
+        #endif
 
         // Try HTML
-        if let htmlData = representations[NSPasteboard.PasteboardType.html.rawValue],
+        #if os(macOS)
+        let htmlKey = NSPasteboard.PasteboardType.html.rawValue
+        #else
+        let htmlKey = "HTML Format"
+        #endif
+        if let htmlData = representations[htmlKey] ?? representations["public.html"],
            let html = String(data: htmlData, encoding: .utf8) {
             let stripped = html.replacingOccurrences(
                 of: "<[^>]+>",

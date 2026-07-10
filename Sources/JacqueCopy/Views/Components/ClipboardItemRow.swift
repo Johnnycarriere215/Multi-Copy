@@ -159,11 +159,18 @@ struct ClipboardItemRow: View {
                 clipboardEngine.toggleFavorite(item)
             }
             Divider()
+            #if os(macOS)
             Button("Copy Preview Text") {
                 let pb = NSPasteboard.general
                 pb.clearContents()
                 pb.setString(item.preview, forType: .string)
             }
+            #else
+            Button("Copy Preview Text") {
+                let data = item.preview.data(using: .utf8) ?? Data()
+                PlatformServices.clipboard.writeRepresentations(["public.utf8-plain-text": data])
+            }
+            #endif
             Divider()
             Button("Delete", role: .destructive) {
                 clipboardEngine.removeFromHistory(item)

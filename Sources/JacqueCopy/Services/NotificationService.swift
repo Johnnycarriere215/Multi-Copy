@@ -3,7 +3,9 @@
 // Copyright (c) 2024 Jacque-Copy Contributors
 
 import Foundation
+#if os(macOS)
 import UserNotifications
+#endif
 
 /// Manages user notifications for clipboard operations and app events.
 public final class NotificationService: ObservableObject {
@@ -38,6 +40,7 @@ public final class NotificationService: ObservableObject {
 
     /// Requests notification permission from the user.
     public func requestPermission() {
+        #if os(macOS)
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { [weak self] granted, error in
             DispatchQueue.main.async {
                 self?.permissionGranted = granted
@@ -48,14 +51,22 @@ public final class NotificationService: ObservableObject {
                 }
             }
         }
+        #else
+        // Windows: always granted via tray notifications
+        permissionGranted = true
+        #endif
     }
 
     private func checkPermissionStatus() {
+        #if os(macOS)
         UNUserNotificationCenter.current().getNotificationSettings { [weak self] settings in
             DispatchQueue.main.async {
                 self?.permissionGranted = settings.authorizationStatus == .authorized
             }
         }
+        #else
+        permissionGranted = true
+        #endif
     }
 
     // MARK: - Notification Delivery
@@ -63,33 +74,46 @@ public final class NotificationService: ObservableObject {
     /// Sends a notification about a clipboard operation.
     public func notifyClipboardCopy(clipboard: ClipboardIdentifier, item: ClipboardItem) {
         guard notificationsEnabled && permissionGranted else { return }
+        #if os(macOS)
         deliverNotification(
             title: "Copied to \(clipboard.displayName)",
             body: item.preview,
             identifier: item.id.uuidString
         )
+        #else
+        print("[\(clipboard.displayName)] Copied: \(item.preview.prefix(50))")
+        #endif
     }
 
     /// Sends a clipboard swap notification.
     public func notifyClipboardSwap() {
         guard notificationsEnabled && permissionGranted else { return }
+        #if os(macOS)
         deliverNotification(
             title: "Clipboards Swapped",
             body: "Clipboard A and Clipboard B have been exchanged.",
             identifier: "clipboard-swap"
         )
+        #else
+        print("Clipboards swapped")
+        #endif
     }
 
     /// Sends a notification when history is cleared.
     public func notifyHistoryCleared(clipboard: ClipboardIdentifier) {
         guard notificationsEnabled && permissionGranted else { return }
+        #if os(macOS)
         deliverNotification(
             title: "History Cleared",
             body: "\(clipboard.displayName) history has been cleared.",
             identifier: "history-cleared-\(clipboard.rawValue)"
         )
+        #else
+        print("\(clipboard.displayName) history cleared")
+        #endif
     }
 
+    #if os(macOS)
     // MARK: - Private Helpers
 
     private func deliverNotification(title: String, body: String, identifier: String) {
@@ -112,4 +136,5 @@ public final class NotificationService: ObservableObject {
             }
         }
     }
+    #endif
 }

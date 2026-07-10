@@ -33,11 +33,10 @@ public enum ClipboardIdentifier: String, Codable, CaseIterable {
 
 /// Core clipboard engine managing dual independent clipboards and their history.
 ///
-/// This is the central coordinator. It does NOT directly perform pasteboard
-/// swap operations — those are managed by HotkeyManager (which intercepts
-/// keyboard events) and PasteboardManager (which performs low-level
-/// NSPasteboard operations). This engine is the source of truth for the
-/// current state of both clipboards and their history.
+/// This is the central coordinator. It uses platform-specific providers
+/// (PasteboardManager on macOS, WindowsClipboardProvider on Windows)
+/// to access the system clipboard. This engine is the source of truth
+/// for the current state of both clipboards and their history.
 @MainActor
 public final class ClipboardEngine: ObservableObject {
 
@@ -50,21 +49,21 @@ public final class ClipboardEngine: ObservableObject {
 
     // MARK: - Dependencies
 
-    private let pasteboardManager: PasteboardManager
+    private let clipboardProvider: ClipboardProvider
     private let historyStore: HistoryStore
     private var monitoringTimer: Timer?
 
     // MARK: - Singleton
 
     public static let shared = ClipboardEngine(
-        pasteboardManager: .shared,
+        clipboardProvider: PlatformServices.clipboard,
         historyStore: HistoryStore.shared
     )
 
     // MARK: - Initialization
 
-    public init(pasteboardManager: PasteboardManager, historyStore: HistoryStore) {
-        self.pasteboardManager = pasteboardManager
+    public init(clipboardProvider: ClipboardProvider, historyStore: HistoryStore) {
+        self.clipboardProvider = clipboardProvider
         self.historyStore = historyStore
     }
 
@@ -85,7 +84,7 @@ public final class ClipboardEngine: ObservableObject {
         clipboardB = tempA
 
         if let newA = clipboardA {
-            pasteboardManager.writeToPasteboard(newA)
+            clipboardProvider.writeRepresentations(newA.representations)
         }
     }
 
@@ -96,7 +95,7 @@ public final class ClipboardEngine: ObservableObject {
 
     /// Captures the current system clipboard into Clipboard A's history.
     public func captureSystemClipboardChange() {
-        guard let item = pasteboardManager.captureCurrentPasteboard() else { return }
+        guard let item = buildClipboardItemFromProvider() else { return }
 
         if let currentA = clipboardA, currentA.representations == item.representations {
             return
@@ -107,17 +106,35 @@ public final class ClipboardEngine: ObservableObject {
         updateHistoryCount()
     }
 
-    /// Updates Clipboard A from the current system pasteboard state.
+    /// Updates Clipboard A from the current system clipboard state.
     public func updateClipboardAFromSystem() {
-        guard let item = pasteboardManager.captureCurrentPasteboard() else { return }
+        guard let item = buildClipboardItemFromProvider() else { return }
+
         clipboardA = item
         historyStore.addItem(item, to: .system)
         updateHistoryCount()
     }
 
+    /// Helper to build a ClipboardItem from the current clipboard provider state.
+    private func buildClipboardItemFromProvider() -> ClipboardItem? {
+        let representations = clipboardProvider.captureCurrent()
+        guard !representations.isEmpty else { return nil }
+
+        let preview = ClipboardItem.generatePreview(from: representations)
+        let sourceApp = clipboardProvider.frontmostApplicationBundleID()
+
+        return ClipboardItem(
+            id: UUID(),
+            preview: preview,
+            capturedAt: Date(),
+            sourceApplication: sourceApp,
+            representations: representations
+        )
+    }
+
     // MARK: - Monitoring
 
-    /// Starts monitoring the system pasteboard for Clipboard A changes.
+    /// Starts monitoring the system clipboard for Clipboard A changes.
     public func startMonitoring() {
         guard !isMonitoring else { return }
         isMonitoring = true
@@ -125,7 +142,7 @@ public final class ClipboardEngine: ObservableObject {
         monitoringTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
             guard let self = self, self.isMonitoring else { return }
 
-            if self.pasteboardManager.hasChanged() {
+            if self.clipboardProvider.hasChanged() {
                 Task { @MainActor in
                     self.captureSystemClipboardChange()
                 }

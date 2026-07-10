@@ -31,12 +31,19 @@
 
 ## 🚀 Quick Install
 
+### macOS
 1. **Download** `JacqueCopy-1.0.0.dmg` above
 2. **Open** the DMG file
 3. **Drag** Jacque-Copy into your **Applications** folder
-4. **Launch** Jacque-Copy — it appears in your menu bar
+4. **Launch** — it appears in your menu bar
 5. **Grant** Accessibility permission when prompted
 6. **Use** ⌃C to copy to Clipboard B, ⌃V to paste from it
+
+### Windows
+1. **Download** `JacqueCopy-1.0.0-windows.zip` above
+2. **Extract** the ZIP to any folder
+3. **Run** `JacqueCopy.exe` — it appears in your system tray
+4. **Use** Alt+C to copy to Clipboard B, Alt+V to paste from it
 
 ---
 
@@ -70,6 +77,8 @@ Near-zero idle CPU. Under 20 MB RAM. Event-driven architecture — no polling, n
 
 ## ⌨️ Default Shortcuts
 
+### macOS
+
 | Action | Shortcut |
 |---|---|
 | Copy (Clipboard A) | ⌘C |
@@ -83,15 +92,26 @@ Near-zero idle CPU. Under 20 MB RAM. Event-driven architecture — no polling, n
 
 All configurable in **Settings → Hotkeys**.
 
+### Windows
+
+| Action | Shortcut |
+|---|---|
+| Copy (Clipboard A) | Ctrl+C |
+| Paste (Clipboard A) | Ctrl+V |
+| **Copy to Clipboard B** | **Alt+C** |
+| **Paste from Clipboard B** | **Alt+V** |
+| Clear Clipboard B | Ctrl+Alt+X |
+| Swap Clipboards | Ctrl+Alt+S |
+
 ---
 
 ## 📋 Requirements
 
-| | |
-|---|---|
-| **macOS** | 14.0 (Sonoma) or later |
-| **CPU** | Intel (x86_64) or Apple Silicon (arm64) |
-| **Permissions** | Accessibility (for global hotkey interception) |
+| | macOS | Windows |
+|---|---|---|
+| **OS** | 14.0 (Sonoma) or later | 10 (1809) or later |
+| **CPU** | Intel (x86_64) or Apple Silicon (arm64) | x64 or ARM64 |
+| **Permissions** | Accessibility (for hotkey interception) | None required |
 
 ---
 
@@ -117,8 +137,9 @@ All configurable in **Settings → Hotkeys**.
 
 ```
 SHA-256:
-JacqueCopy-1.0.0.dmg  *(auto-generated at build time)*
-JacqueCopy-1.0.0.zip  *(auto-generated at build time)*
+JacqueCopy-1.0.0.dmg          *(auto-generated at build time)*
+JacqueCopy-1.0.0.zip          *(auto-generated at build time)*
+JacqueCopy-1.0.0-windows.zip  *(auto-generated at build time)*
 ```
 
 *Checksums are generated automatically by the CI release workflow and appended to `SHA256SUMS.txt` in the release assets.*
@@ -138,5 +159,5 @@ JacqueCopy-1.0.0.zip  *(auto-generated at build time)*
 ---
 
 <p align="center">
-  <sub>Built with ❤️ for macOS · MIT Licensed · <a href="https://github.com/jacquecopy/jacque-copy">github.com/jacquecopy/jacque-copy</a></sub>
+  <sub>Built with ❤️ for macOS &amp; Windows · MIT Licensed · <a href="https://github.com/jacquecopy/jacque-copy">github.com/jacquecopy/jacque-copy</a></sub>
 </p>
