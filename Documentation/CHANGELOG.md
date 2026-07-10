@@ -37,4 +37,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Local-only data storage
 - No network connections for clipboard data
 
-[1.0.0]: https://github.com/jacquecopy/jacque-copy/releases/tag/v1.0.0
+[1.0.0]: https://github.com/Johnnycarriere215/Multi-Copy/releases/tag/v1.0.0

@@ -50,7 +50,7 @@ To become the best dual clipboard solution on macOS — feeling like a first-par
 
 ## Have an idea?
 
-Open a [Feature Request](https://github.com/jacquecopy/jacque-copy/issues/new?template=feature_request.md) or join the discussion in [Discussions](https://github.com/jacquecopy/jacque-copy/discussions).
+Open a [Feature Request](https://github.com/Johnnycarriere215/Multi-Copy/issues/new?template=feature_request.md) or join the discussion in [Discussions](https://github.com/Johnnycarriere215/Multi-Copy/discussions).
 
 ---
 

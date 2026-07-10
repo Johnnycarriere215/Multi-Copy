@@ -10,17 +10,17 @@
 <p align="center"><strong>A beautiful dual clipboard built for macOS and Windows.</strong></p>
 
 <p align="center">
-  <a href="https://github.com/jacquecopy/jacque-copy/releases/latest"><img src="https://img.shields.io/github/v/release/jacquecopy/jacque-copy?color=%23D4A017&style=for-the-badge" alt="Latest Release"></a>
-  <a href="https://github.com/jacquecopy/jacque-copy/blob/main/LICENSE"><img src="https://img.shields.io/github/license/jacquecopy/jacque-copy?color=%23D4A017&style=for-the-badge" alt="MIT License"></a>
+  <a href="https://github.com/Johnnycarriere215/Multi-Copy/releases/latest"><img src="https://img.shields.io/github/v/release/Johnnycarriere215/Multi-Copy?color=%23D4A017&style=for-the-badge" alt="Latest Release"></a>
+  <a href="https://github.com/Johnnycarriere215/Multi-Copy/blob/main/LICENSE"><img src="https://img.shields.io/github/license/Johnnycarriere215/Multi-Copy?color=%23D4A017&style=for-the-badge" alt="MIT License"></a>
   <img src="https://img.shields.io/badge/macOS-14%2B-%23D4A017?style=for-the-badge" alt="macOS 14+">
   <img src="https://img.shields.io/badge/Windows-10%2B-%23D4A017?style=for-the-badge" alt="Windows 10+">
-  <a href="https://github.com/jacquecopy/jacque-copy/actions"><img src="https://img.shields.io/github/actions/workflow/status/jacquecopy/jacque-copy/build.yml?style=for-the-badge" alt="Build"></a>
+  <a href="https://github.com/Johnnycarriere215/Multi-Copy/actions"><img src="https://img.shields.io/github/actions/workflow/status/Johnnycarriere215/Multi-Copy/build.yml?style=for-the-badge" alt="Build"></a>
 </p>
 
 ---
 
 <p align="center">
-  <a href="https://github.com/jacquecopy/jacque-copy/releases/latest">
+  <a href="https://github.com/Johnnycarriere215/Multi-Copy/releases/latest">
     <img src="https://img.shields.io/badge/%E2%AC%87%20Download-Latest%20Release-%23D4A017?style=for-the-badge&logo=github&logoColor=white&labelColor=1C1C1E" alt="Download Latest Release" height="48">
   </a>
 </p>
@@ -51,7 +51,7 @@ This is not clipboard history. Not multiple tabs. Not categories. **It's literal
 
 ### macOS
 
-**[→ Download the latest DMG from GitHub Releases](https://github.com/jacquecopy/jacque-copy/releases/latest)**
+**[→ Download the latest DMG from GitHub Releases](https://github.com/Johnnycarriere215/Multi-Copy/releases/latest)**
 
 Get `JacqueCopy-*.dmg` from the latest release. Open the DMG, drag to Applications, launch. Grant Accessibility permission when prompted.
 
@@ -59,7 +59,7 @@ Use **⌃C** to copy to Clipboard B and **⌃V** to paste from it.
 
 ### Windows
 
-**[→ Download the latest Windows release](https://github.com/jacquecopy/jacque-copy/releases/latest)**
+**[→ Download the latest Windows release](https://github.com/Johnnycarriere215/Multi-Copy/releases/latest)**
 
 Get `JacqueCopy-*-windows.zip` from the latest release. Extract and run `JacqueCopy.exe`. The app runs from the system tray.
 
@@ -135,7 +135,7 @@ Zero idle CPU. Under 20 MB RAM. Event-driven — no polling, no busy loops. Nati
 
 ### Option 1: Download (Recommended)
 
-**[→ Get the latest release](https://github.com/jacquecopy/jacque-copy/releases/latest)**
+**[→ Get the latest release](https://github.com/Johnnycarriere215/Multi-Copy/releases/latest)**
 
 - **macOS**: Download the DMG, drag to Applications, done.
 - **Windows**: Download the ZIP, extract, run `JacqueCopy.exe`.
@@ -149,7 +149,7 @@ brew install --cask jacque-copy
 ### Option 3: Build from Source
 
 ```bash
-git clone https://github.com/jacquecopy/jacque-copy.git
+git clone https://github.com/Johnnycarriere215/Multi-Copy.git
 cd jacque-copy
 
 # macOS

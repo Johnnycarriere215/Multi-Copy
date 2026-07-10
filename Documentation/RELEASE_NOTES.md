@@ -1,18 +1,22 @@
 <p align="center">
-  <img src="Resources/Assets.xcassets/AppIcon.appiconset/icon-256.png" width="96" height="96" alt="Jacque-Copy">
+  <img src="https://raw.githubusercontent.com/Johnnycarriere215/Multi-Copy/main/Resources/Assets.xcassets/AppIcon.appiconset/icon-256.png" width="96" height="96" alt="Jacque-Copy">
 </p>
 
 # Jacque-Copy v1.0.0
 
-<p align="center"><strong>First public release — a beautiful dual clipboard built specifically for macOS.</strong></p>
+<p align="center"><strong>First public release — a beautiful dual clipboard for macOS and Windows.</strong></p>
 
 <p align="center">
-  <a href="https://github.com/jacquecopy/jacque-copy/releases/download/v1.0.0/JacqueCopy-1.0.0.dmg">
+  <a href="https://github.com/Johnnycarriere215/Multi-Copy/releases/download/v1.0.0/JacqueCopy-1.0.0.dmg">
     <img src="https://img.shields.io/badge/%E2%AC%87%20Download%20DMG-macOS%2014%2B-%23D4A017?style=for-the-badge&logo=apple&logoColor=white&labelColor=1C1C1E" alt="Download DMG" height="40">
   </a>
   &nbsp;
-  <a href="https://github.com/jacquecopy/jacque-copy/releases/download/v1.0.0/JacqueCopy-1.0.0.zip">
-    <img src="https://img.shields.io/badge/%E2%AC%87%20Download%20ZIP-macOS%2014%2B-%23555557?style=for-the-badge&logo=apple&logoColor=white&labelColor=1C1C1E" alt="Download ZIP" height="40">
+  <a href="https://github.com/Johnnycarriere215/Multi-Copy/releases/download/v1.0.0/JacqueCopy-1.0.0-windows.zip">
+    <img src="https://img.shields.io/badge/%E2%AC%87%20Download%20ZIP-Windows%2010%2B-%23D4A017?style=for-the-badge&logo=windows&logoColor=white&labelColor=1C1C1E" alt="Download Windows ZIP" height="40">
+  </a>
+  &nbsp;
+  <a href="https://github.com/Johnnycarriere215/Multi-Copy/releases/download/v1.0.0/JacqueCopy-1.0.0.zip">
+    <img src="https://img.shields.io/badge/%E2%AC%87%20macOS%20ZIP-14%2B-%23555557?style=for-the-badge&logo=apple&logoColor=white&labelColor=1C1C1E" alt="Download macOS ZIP" height="40">
   </a>
 </p>
 
@@ -22,10 +26,10 @@
 
 | Asset | Type | Size |
 |---|---|---|
-| **[JacqueCopy-1.0.0.dmg](https://github.com/jacquecopy/jacque-copy/releases/download/v1.0.0/JacqueCopy-1.0.0.dmg)** | Disk Image (Recommended) | *auto-generated* |
-| **[JacqueCopy-1.0.0.zip](https://github.com/jacquecopy/jacque-copy/releases/download/v1.0.0/JacqueCopy-1.0.0.zip)** | ZIP Archive | *auto-generated* |
-| [Source Code (.zip)](https://github.com/jacquecopy/jacque-copy/archive/refs/tags/v1.0.0.zip) | Source | *auto-generated* |
-| [Source Code (.tar.gz)](https://github.com/jacquecopy/jacque-copy/archive/refs/tags/v1.0.0.tar.gz) | Source | *auto-generated* |
+| **[JacqueCopy-1.0.0.dmg](https://github.com/Johnnycarriere215/Multi-Copy/releases/download/v1.0.0/JacqueCopy-1.0.0.dmg)** | Disk Image (Recommended) | *auto-generated* |
+| **[JacqueCopy-1.0.0.zip](https://github.com/Johnnycarriere215/Multi-Copy/releases/download/v1.0.0/JacqueCopy-1.0.0.zip)** | ZIP Archive | *auto-generated* |
+| [Source Code (.zip)](https://github.com/Johnnycarriere215/Multi-Copy/archive/refs/tags/v1.0.0.zip) | Source | *auto-generated* |
+| [Source Code (.tar.gz)](https://github.com/Johnnycarriere215/Multi-Copy/archive/refs/tags/v1.0.0.tar.gz) | Source | *auto-generated* |
 
 ---
 
@@ -159,5 +163,5 @@ JacqueCopy-1.0.0-windows.zip  *(auto-generated at build time)*
 ---
 
 <p align="center">
-  <sub>Built with ❤️ for macOS &amp; Windows · MIT Licensed · <a href="https://github.com/jacquecopy/jacque-copy">github.com/jacquecopy/jacque-copy</a></sub>
+  <sub>Built with ❤️ for macOS &amp; Windows · MIT Licensed · <a href="https://github.com/Johnnycarriere215/Multi-Copy">github.com/Johnnycarriere215/Multi-Copy</a></sub>
 </p>

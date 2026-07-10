@@ -70,7 +70,7 @@ public final class UpdateChecker: ObservableObject {
         isCheckingForUpdates = true
         // Open GitHub releases in default browser
         #if os(Windows)
-        if let url = URL(string: "https://github.com/jacquecopy/jacque-copy/releases/latest") {
+        if let url = URL(string: "https://github.com/Johnnycarriere215/Multi-Copy/releases/latest") {
             // On Windows, we'd use ShellExecute, but for now just note it
             print("Check for updates at: \(url.absoluteString)")
         }

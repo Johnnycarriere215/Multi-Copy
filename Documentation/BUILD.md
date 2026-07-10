@@ -13,7 +13,7 @@
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/jacquecopy/jacque-copy.git
+   git clone https://github.com/Johnnycarriere215/Multi-Copy.git
    cd jacque-copy
    ```
 

@@ -76,4 +76,4 @@ Check Console.app for Jacque-Copy log messages. You can also enable diagnostic l
 
 ### I found a bug
 
-Please [open an issue](https://github.com/jacquecopy/jacque-copy/issues/new?template=bug_report.md) with details about what happened and your macOS version.
+Please [open an issue](https://github.com/Johnnycarriere215/Multi-Copy/issues/new?template=bug_report.md) with details about what happened and your macOS version.

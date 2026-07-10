@@ -9,7 +9,7 @@
 
 ### Method 1: GitHub Releases (Recommended)
 
-1. Visit the [Releases page](https://github.com/jacquecopy/jacque-copy/releases/latest)
+1. Visit the [Releases page](https://github.com/Johnnycarriere215/Multi-Copy/releases/latest)
 2. Download `JacqueCopy-{version}.dmg`
 3. Open the DMG file
 4. Drag **Jacque-Copy** to the **Applications** folder

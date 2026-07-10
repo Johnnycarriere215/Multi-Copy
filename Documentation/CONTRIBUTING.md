@@ -74,4 +74,4 @@ Releases are managed by maintainers. Version numbers follow [Semantic Versioning
 
 ## Questions?
 
-Open a [Discussion](https://github.com/jacquecopy/jacque-copy/discussions) or join us on the issue tracker.
+Open a [Discussion](https://github.com/Johnnycarriere215/Multi-Copy/discussions) or join us on the issue tracker.
