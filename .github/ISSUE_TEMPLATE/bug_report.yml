@@ -1,0 +1,76 @@
+name: Bug Report
+description: Report a problem with Jacque-Copy
+labels: [bug, triage]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug!
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the Bug
+      description: What happened? What did you expect to happen?
+      placeholder: "When I press Ctrl+V, nothing gets pasted..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: How can we reproduce this issue?
+      placeholder: |
+        1. Copy text with Cmd+C
+        2. Copy different text with Ctrl+C
+        3. Press Ctrl+V
+        4. Notice nothing happens
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Which version of Jacque-Copy are you running?
+      placeholder: "1.0.0"
+    validations:
+      required: true
+
+  - type: input
+    id: macos
+    attributes:
+      label: macOS Version
+      description: Which macOS version are you running?
+      placeholder: "macOS 14.5"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: mac
+    attributes:
+      label: Mac Type
+      options:
+        - Apple Silicon (M1/M2/M3)
+        - Intel
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Diagnostic Logs
+      description: |
+        Enable diagnostic logging in Settings > Advanced, reproduce the bug,
+        then export logs from Settings > Advanced and paste relevant sections.
+      render: shell
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Confirmation
+      options:
+        - label: Accessibility permissions are granted for Jacque-Copy
+        - label: I've checked this isn't a duplicate issue
+        - label: I've tested with other apps to confirm it's not app-specific

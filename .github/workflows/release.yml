@@ -1,0 +1,109 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: "15.4"
+
+      - name: Set Version
+        id: version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Building version $VERSION"
+
+      - name: Resolve Dependencies
+        run: swift package resolve
+
+      - name: Build Release (arm64)
+        run: |
+          swift build \
+            --configuration release \
+            --arch arm64 \
+            --product JacqueCopy
+
+      - name: Build Release (x86_64)
+        run: |
+          swift build \
+            --configuration release \
+            --arch x86_64 \
+            --product JacqueCopy
+
+      - name: Create Universal Binary
+        run: |
+          mkdir -p build/universal
+          lipo -create \
+            .build/arm64-apple-macosx/release/JacqueCopy \
+            .build/x86_64-apple-macosx/release/JacqueCopy \
+            -output build/universal/JacqueCopy
+
+      - name: Create App Bundle
+        run: |
+          mkdir -p "build/JacqueCopy.app/Contents/MacOS"
+          mkdir -p "build/JacqueCopy.app/Contents/Resources"
+          cp build/universal/JacqueCopy "build/JacqueCopy.app/Contents/MacOS/"
+          cp Sources/JacqueCopy/Resources/Info.plist "build/JacqueCopy.app/Contents/"
+
+      - name: Create DMG
+        run: |
+          brew install create-dmg
+          create-dmg \
+            --window-pos 200 120 \
+            --window-size 600 400 \
+            --icon-size 100 \
+            --icon "JacqueCopy.app" 150 190 \
+            --hide-extension "JacqueCopy.app" \
+            --app-drop-link 450 185 \
+            --volname "Jacque-Copy" \
+            "build/JacqueCopy-${{ steps.version.outputs.version }}.dmg" \
+            "build/JacqueCopy.app"
+
+      - name: Create ZIP
+        run: |
+          cd build
+          ditto -c -k --sequesterRsrc --keepParent \
+            "JacqueCopy.app" \
+            "JacqueCopy-${{ steps.version.outputs.version }}.zip"
+          cd ..
+
+      - name: Generate Checksums
+        run: |
+          cd build
+          shasum -a 256 \
+            "JacqueCopy-${{ steps.version.outputs.version }}.dmg" \
+            "JacqueCopy-${{ steps.version.outputs.version }}.zip" \
+            > SHA256SUMS.txt
+          cd ..
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "Jacque-Copy v${{ steps.version.outputs.version }}"
+          body_path: Documentation/RELEASE_NOTES.md
+          draft: true
+          prerelease: false
+          generate_release_notes: true
+          files: |
+            build/JacqueCopy-${{ steps.version.outputs.version }}.dmg
+            build/JacqueCopy-${{ steps.version.outputs.version }}.zip
+            build/SHA256SUMS.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

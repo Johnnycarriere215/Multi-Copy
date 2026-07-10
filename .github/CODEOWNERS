@@ -1,0 +1,11 @@
+# CODEOWNERS
+
+# Global maintainers
+* @jacquecopy/maintainers
+
+# Documentation
+/Documentation/ @jacquecopy/docs
+
+# CI/CD
+/.github/ @jacquecopy/ci
+/Scripts/ @jacquecopy/ci
