@@ -45,7 +45,7 @@ jobs:
           set -o pipefail
           swift build -c release --arch arm64 --product JacqueCopy 2>&1 | tee build-arm64.log || {
             echo "::error::arm64 build failed — last 60 lines follow"
-            tail -n 60 build-arm64.log | while IFS= read -r l; do echo "::error::$l"; done
+            tail -n 200 build-arm64.log | while IFS= read -r l; do echo "::error::$l"; done
             exit 1
           }
 
@@ -54,7 +54,7 @@ jobs:
           set -o pipefail
           swift build -c release --arch x86_64 --product JacqueCopy 2>&1 | tee build-x64.log || {
             echo "::error::x86_64 build failed — last 60 lines follow"
-            tail -n 60 build-x64.log | while IFS= read -r l; do echo "::error::$l"; done
+            tail -n 200 build-x64.log | while IFS= read -r l; do echo "::error::$l"; done
             exit 1
           }
 

@@ -165,7 +165,7 @@ struct MenuBarContentView: View {
             } else {
                 ScrollView {
                     LazyVStack(spacing: 0) {
-                        ForEach(recentItems.prefix(10)) { item in
+                        ForEach(Array(recentItems.prefix(10))) { item in
                             ClipboardItemRow(item: item) {
                                 clipboardEngine.setClipboardBContent(item)
                                 clipboardEngine.pasteFromClipboardB()
@@ -236,7 +236,7 @@ struct MenuBarContentView: View {
             } else {
                 ScrollView {
                     LazyVStack(spacing: 0) {
-                        ForEach(results.prefix(20)) { item in
+                        ForEach(Array(results.prefix(20))) { item in
                             ClipboardItemRow(item: item) {
                                 clipboardEngine.setClipboardBContent(item)
                                 clipboardEngine.pasteFromClipboardB()
