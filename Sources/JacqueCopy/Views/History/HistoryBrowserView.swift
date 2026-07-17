@@ -166,23 +166,24 @@ struct HistoryBrowserView: View {
 
     // MARK: - Content
 
-    @ViewBuilder
     private var contentView: some View {
         let items = filteredItems
 
-        if items.isEmpty {
-            emptyState
-        } else {
-            ScrollView {
-                LazyVStack(spacing: 0) {
-                    ForEach(items) { item in
-                        ClipboardItemRow(item: item) {
-                            clipboardEngine.setClipboardBContent(item)
-                            clipboardEngine.pasteFromClipboardB()
+        return Group {
+            if items.isEmpty {
+                emptyState
+            } else {
+                ScrollView {
+                    LazyVStack(spacing: 0) {
+                        ForEach(items) { item in
+                            ClipboardItemRow(item: item) {
+                                clipboardEngine.setClipboardBContent(item)
+                                clipboardEngine.pasteFromClipboardB()
+                            }
+                            .environmentObject(clipboardEngine)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 2)
                         }
-                        .environmentObject(clipboardEngine)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 2)
                     }
                 }
             }
