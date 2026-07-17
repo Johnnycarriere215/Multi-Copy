@@ -81,13 +81,10 @@ struct HistoryBrowserView: View {
                 ScrollView {
                     LazyVStack(spacing: 0) {
                         ForEach(items) { item in
-                            ClipboardItemRow(item: item) {
+                            HistoryRow(item: item) {
                                 clipboardEngine.setClipboardBContent(item)
                                 clipboardEngine.pasteFromClipboardB()
                             }
-                            .environmentObject(clipboardEngine)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 2)
                         }
                     }
                     .padding(.vertical, 4)
@@ -111,5 +108,27 @@ struct HistoryBrowserView: View {
         } else {
             return clipboardEngine.searchHistory(query: searchText)
         }
+    }
+}
+
+// MARK: - History Row
+
+private struct HistoryRow: View {
+    let item: ClipboardItem
+    let onTap: () -> Void
+
+    @State private var isHovering = false
+
+    var body: some View {
+        Text(item.preview)
+            .lineLimit(2)
+            .font(.system(size: 12))
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(isHovering ? Color.primary.opacity(0.06) : Color.clear)
+            .contentShape(Rectangle())
+            .onHover { isHovering = $0 }
+            .onTapGesture { onTap() }
     }
 }
