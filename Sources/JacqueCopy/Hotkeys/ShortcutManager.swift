@@ -143,7 +143,10 @@ public final class ShortcutManager: ObservableObject {
         if modifiers.contains(.shift) { modifierSymbols += "\u{21E7}" }
         if modifiers.contains(.command) { modifierSymbols += "\u{2318}" }
 
-        let description = "\(modifierSymbols)\(key.description)"
+        // KeyboardShortcuts.Key exposes no textual description; match on the
+        // modifier symbols only. This conservatively flags modifier-based
+        // reserved combinations without the trailing key character.
+        let description = modifierSymbols
         return reservedCombinations.contains(where: { description.contains($0) })
     }
     #else

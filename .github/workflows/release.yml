@@ -44,8 +44,9 @@ jobs:
         run: |
           set -o pipefail
           swift build -c release --arch arm64 --product JacqueCopy 2>&1 | tee build-arm64.log || {
-            echo "::error::arm64 build failed — compile errors follow (GitHub keeps only 10)"
-            grep -E ": error:" build-arm64.log | head -8 | while IFS= read -r l; do echo "::error::$l"; done
+            ERRS=$(grep -E ": error:" build-arm64.log | head -60 | sed 's/%/%25/g; s/\r$//')
+            ENC=$(printf '%s' "$ERRS" | sed ':a;N;$!ba;s/\n/%0A/g')
+            echo "::error::arm64 compile errors (${ERRS:+see below}):%0A$ENC"
             exit 1
           }
 
@@ -53,8 +54,9 @@ jobs:
         run: |
           set -o pipefail
           swift build -c release --arch x86_64 --product JacqueCopy 2>&1 | tee build-x64.log || {
-            echo "::error::x86_64 build failed — compile errors follow (GitHub keeps only 10)"
-            grep -E ": error:" build-x64.log | head -8 | while IFS= read -r l; do echo "::error::$l"; done
+            ERRS=$(grep -E ": error:" build-x64.log | head -60 | sed 's/%/%25/g; s/\r$//')
+            ENC=$(printf '%s' "$ERRS" | sed ':a;N;$!ba;s/\n/%0A/g')
+            echo "::error::x86_64 compile errors:%0A$ENC"
             exit 1
           }
 
