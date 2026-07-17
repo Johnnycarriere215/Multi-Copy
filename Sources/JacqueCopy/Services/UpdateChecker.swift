@@ -46,6 +46,7 @@ public final class UpdateChecker: ObservableObject {
 
         self.canCheckForUpdates = true
     }
+    #endif
 
     // MARK: - Public Methods
 

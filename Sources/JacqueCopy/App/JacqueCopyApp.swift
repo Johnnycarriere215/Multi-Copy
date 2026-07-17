@@ -160,13 +160,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         KeyboardShortcuts.onKeyDown(for: .clearClipboardB) { [weak self] in
-            self?.clipboardEngine.clearClipboardB()
-            NotificationService.shared.notifyHistoryCleared(clipboard: .secondary)
+            Task { @MainActor in
+                self?.clipboardEngine.clearClipboardB()
+                NotificationService.shared.notifyHistoryCleared(clipboard: .secondary)
+            }
         }
 
         KeyboardShortcuts.onKeyDown(for: .swapClipboards) { [weak self] in
-            self?.clipboardEngine.swapClipboards()
-            NotificationService.shared.notifyClipboardSwap()
+            Task { @MainActor in
+                self?.clipboardEngine.swapClipboards()
+                NotificationService.shared.notifyClipboardSwap()
+            }
         }
     }
 

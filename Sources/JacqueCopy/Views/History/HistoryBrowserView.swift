@@ -176,7 +176,7 @@ struct HistoryBrowserView: View {
         } else {
             ScrollViewReader { proxy in
                 List(selection: $selectedItemId) {
-                    ForEach(items) { item in
+                    ForEach(items, id: \.id) { item in
                         HistoryBrowserRow(
                             item: item,
                             onPaste: {

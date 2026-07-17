@@ -4,6 +4,7 @@
 
 import Foundation
 #if os(macOS)
+import AppKit
 import KeyboardShortcuts
 #endif
 
@@ -91,6 +92,7 @@ public final class ShortcutManager: ObservableObject {
     #endif
 
     /// Returns a human-readable description of the shortcut for Clipboard B copy.
+    @MainActor
     public var copyToClipboardBDescription: String {
         #if os(Windows)
         return PlatformServices.defaultCopyShortcutDescription
@@ -100,6 +102,7 @@ public final class ShortcutManager: ObservableObject {
     }
 
     /// Returns a human-readable description of the shortcut for Clipboard B paste.
+    @MainActor
     public var pasteFromClipboardBDescription: String {
         #if os(Windows)
         return PlatformServices.defaultPasteShortcutDescription
