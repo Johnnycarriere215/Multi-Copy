@@ -20,7 +20,6 @@ struct HistoryBrowserView: View {
     // MARK: - State
 
     @State private var searchText: String = ""
-    @State private var selectedItemId: UUID?
     @State private var filterClipboard: ClipboardIdentifier?
     @State private var sortOrder: SortOrder = .newestFirst
     @State private var showOnlyPinned: Bool = false
@@ -175,24 +174,26 @@ struct HistoryBrowserView: View {
             emptyState
         } else {
             ScrollViewReader { proxy in
-                List(selection: $selectedItemId) {
-                    ForEach(items) { item in
-                        HistoryBrowserRow(
-                            item: item,
-                            onPaste: {
-                                clipboardEngine.setClipboardBContent(item)
-                                clipboardEngine.pasteFromClipboardB()
-                            },
-                            onSetClipboardA: {
-                                PasteboardManager.shared.writeToPasteboard(item)
-                            }
-                        )
-                        .environmentObject(clipboardEngine)
-                        .listRowInsets(EdgeInsets(top: 2, leading: 8, bottom: 2, trailing: 8))
-                        .listRowSeparator(.hidden)
+                ScrollView {
+                    LazyVStack(spacing: 0) {
+                        ForEach(items) { item in
+                            HistoryBrowserRow(
+                                item: item,
+                                onPaste: {
+                                    clipboardEngine.setClipboardBContent(item)
+                                    clipboardEngine.pasteFromClipboardB()
+                                },
+                                onSetClipboardA: {
+                                    PasteboardManager.shared.writeToPasteboard(item)
+                                }
+                            )
+                            .environmentObject(clipboardEngine)
+                            .id(item.id)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 2)
+                        }
                     }
                 }
-                .listStyle(.plain)
                 .onChange(of: searchText) { _ in
                     if let first = items.first {
                         proxy.scrollTo(first.id, anchor: .top)
