@@ -175,7 +175,8 @@ struct HistoryBrowserView: View {
             } else {
                 ScrollView {
                     LazyVStack(spacing: 0) {
-                        ForEach(items) { item in
+                        ForEach(Array(items.enumerated()), id: \.offset) { pair in
+                            let item = pair.element
                             ClipboardItemRow(item: item) {
                                 clipboardEngine.setClipboardBContent(item)
                                 clipboardEngine.pasteFromClipboardB()
