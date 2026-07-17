@@ -173,30 +173,22 @@ struct HistoryBrowserView: View {
         if items.isEmpty {
             emptyState
         } else {
-            ScrollViewReader { proxy in
-                ScrollView {
-                    LazyVStack(spacing: 0) {
-                        ForEach(items) { item in
-                            HistoryBrowserRow(
-                                item: item,
-                                onPaste: {
-                                    clipboardEngine.setClipboardBContent(item)
-                                    clipboardEngine.pasteFromClipboardB()
-                                },
-                                onSetClipboardA: {
-                                    PasteboardManager.shared.writeToPasteboard(item)
-                                }
-                            )
-                            .environmentObject(clipboardEngine)
-                            .id(item.id)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 2)
-                        }
-                    }
-                }
-                .onChange(of: searchText) { _ in
-                    if let first = items.first {
-                        proxy.scrollTo(first.id, anchor: .top)
+            ScrollView {
+                LazyVStack(spacing: 0) {
+                    ForEach(items) { item in
+                        HistoryBrowserRow(
+                            item: item,
+                            onPaste: {
+                                clipboardEngine.setClipboardBContent(item)
+                                clipboardEngine.pasteFromClipboardB()
+                            },
+                            onSetClipboardA: {
+                                PasteboardManager.shared.writeToPasteboard(item)
+                            }
+                        )
+                        .environmentObject(clipboardEngine)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 2)
                     }
                 }
             }
