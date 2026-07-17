@@ -167,9 +167,9 @@ struct HistoryBrowserView: View {
     // MARK: - Content
 
     private var contentView: some View {
-        let items = filteredItems
+        VStack(spacing: 0) {
+            let items = filteredItems
 
-        return Group {
             if items.isEmpty {
                 emptyState
             } else {
