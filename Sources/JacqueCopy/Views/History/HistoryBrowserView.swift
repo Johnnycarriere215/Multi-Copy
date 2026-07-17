@@ -176,7 +176,7 @@ struct HistoryBrowserView: View {
         } else {
             ScrollViewReader { proxy in
                 List(selection: $selectedItemId) {
-                    ForEach(items, id: \.id) { item in
+                    ForEach(items) { item in
                         HistoryBrowserRow(
                             item: item,
                             onPaste: {
@@ -386,27 +386,28 @@ struct HistoryBrowserRow: View {
         }
     }
 
-    @ViewBuilder
     private var contentIcon: some View {
-        switch item.contentType {
-        case .plainText:
-            Image(systemName: "text.alignleft")
-                .foregroundColor(.secondary)
-        case .richText:
-            Image(systemName: "text.word.spacing")
-                .foregroundColor(.blue)
-        case .image:
-            Image(systemName: "photo")
-                .foregroundColor(.green)
-        case .file:
-            Image(systemName: "doc")
-                .foregroundColor(.orange)
-        case .url:
-            Image(systemName: "link")
-                .foregroundColor(.purple)
-        case .other:
-            Image(systemName: "questionmark.square")
-                .foregroundColor(.secondary)
+        Group {
+            switch item.contentType {
+            case .plainText:
+                Image(systemName: "text.alignleft")
+                    .foregroundColor(.secondary)
+            case .richText:
+                Image(systemName: "text.word.spacing")
+                    .foregroundColor(.blue)
+            case .image:
+                Image(systemName: "photo")
+                    .foregroundColor(.green)
+            case .file:
+                Image(systemName: "doc")
+                    .foregroundColor(.orange)
+            case .url:
+                Image(systemName: "link")
+                    .foregroundColor(.purple)
+            case .other:
+                Image(systemName: "questionmark.square")
+                    .foregroundColor(.secondary)
+            }
         }
         .font(.system(size: 12))
         .frame(width: 20)

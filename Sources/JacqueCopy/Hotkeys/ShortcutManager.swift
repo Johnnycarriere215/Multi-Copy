@@ -137,7 +137,13 @@ public final class ShortcutManager: ObservableObject {
             "\u{2303}\u{21E7}Power",             // Sleep
         ]
 
-        let description = "\(modifiers.description)\(key.description)"
+        var modifierSymbols = ""
+        if modifiers.contains(.control) { modifierSymbols += "\u{2303}" }
+        if modifiers.contains(.option) { modifierSymbols += "\u{2325}" }
+        if modifiers.contains(.shift) { modifierSymbols += "\u{21E7}" }
+        if modifiers.contains(.command) { modifierSymbols += "\u{2318}" }
+
+        let description = "\(modifierSymbols)\(key.description)"
         return reservedCombinations.contains(where: { description.contains($0) })
     }
     #else
