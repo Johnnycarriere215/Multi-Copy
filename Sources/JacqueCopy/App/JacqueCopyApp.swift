@@ -159,16 +159,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             // The menu bar extra handles this naturally
         }
 
-        KeyboardShortcuts.onKeyDown(for: .clearClipboardB) { [weak self] in
+        KeyboardShortcuts.onKeyDown(for: .clearClipboardB) {
             Task { @MainActor in
-                self?.clipboardEngine.clearClipboardB()
+                ClipboardEngine.shared.clearClipboardB()
                 NotificationService.shared.notifyHistoryCleared(clipboard: .secondary)
             }
         }
 
-        KeyboardShortcuts.onKeyDown(for: .swapClipboards) { [weak self] in
+        KeyboardShortcuts.onKeyDown(for: .swapClipboards) {
             Task { @MainActor in
-                self?.clipboardEngine.swapClipboards()
+                ClipboardEngine.shared.swapClipboards()
                 NotificationService.shared.notifyClipboardSwap()
             }
         }
