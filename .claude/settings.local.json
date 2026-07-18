@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh auth *)",
+      "Bash(gh release *)",
+      "Bash(gh run *)",
+      "Bash(gh api *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(grep -iB0 \"Task\\\\|onKeyDown\")",
+      "Bash(git ls-remote *)",
+      "Bash(grep -E \"v1\\\\.0\\\\.0|v1$\")",
+      "Bash(git tag *)"
+    ]
+  }
+}
