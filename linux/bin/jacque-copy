@@ -1,0 +1,4 @@
+#!/bin/sh
+# Launcher for Jacque-Copy (installed under /usr/lib/jacque-copy).
+export PYTHONPATH="/usr/lib/jacque-copy:${PYTHONPATH}"
+exec python3 -m jacquecopy "$@"

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Jacque-Copy
+GenericName=Clipboard Manager
+Comment=Dual clipboard manager — Alt+C / Alt+V for a second clipboard
+Exec=jacque-copy
+Icon=jacque-copy
+Terminal=false
+Categories=Utility;GTK;
+Keywords=clipboard;copy;paste;history;
+StartupNotify=false

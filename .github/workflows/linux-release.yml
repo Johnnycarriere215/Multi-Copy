@@ -1,0 +1,67 @@
+name: Linux Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-deb:
+    name: Build Linux .deb
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install packaging tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends fakeroot dpkg-dev librsvg2-bin
+
+      - name: Set Version
+        id: version
+        run: |
+          if [ "${GITHUB_REF#refs/tags/}" != "$GITHUB_REF" ]; then
+            echo "version=${GITHUB_REF#refs/tags/v}" >> "$GITHUB_OUTPUT"
+          else
+            echo "version=$(python3 -c 'import sys; sys.path.insert(0, "linux"); import jacquecopy; print(jacquecopy.__version__)')" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Regenerate icons from SVG
+        run: |
+          cd linux
+          for size in 16 24 32 48 64 128 256 512; do
+            rsvg-convert -w "$size" -h "$size" data/icon.svg -o "data/icons/jacque-copy-${size}.png"
+          done
+
+      - name: Build .deb
+        run: |
+          cd linux
+          bash packaging/build-deb.sh "${{ steps.version.outputs.version }}"
+
+      - name: Inspect package
+        run: |
+          DEB=$(ls linux/dist/*.deb)
+          echo "Built: $DEB"
+          dpkg-deb -I "$DEB"
+          dpkg-deb -c "$DEB"
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-deb
+          path: linux/dist/*.deb
+
+      - name: Attach to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          fail_on_unmatched_files: false
+          files: linux/dist/*.deb
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
