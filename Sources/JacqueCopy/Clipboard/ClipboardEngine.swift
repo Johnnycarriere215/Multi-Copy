@@ -77,6 +77,13 @@ public final class ClipboardEngine: ObservableObject {
         updateHistoryCount()
     }
 
+    /// Writes Clipboard B's current content to the system pasteboard so it can
+    /// be pasted into the frontmost application. No-op when Clipboard B is empty.
+    public func pasteFromClipboardB() {
+        guard let item = clipboardB else { return }
+        clipboardProvider.writeRepresentations(item.representations)
+    }
+
     /// Swaps the contents of Clipboard A and Clipboard B.
     public func swapClipboards() {
         let tempA = clipboardA

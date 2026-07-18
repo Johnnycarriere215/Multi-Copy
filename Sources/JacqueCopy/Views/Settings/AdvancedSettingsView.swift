@@ -3,15 +3,14 @@
 // Copyright (c) 2024 Jacque-Copy Contributors
 
 import SwiftUI
+#if os(macOS)
+import AppKit
+import UniformTypeIdentifiers
+#endif
 
 /// Advanced settings: developer mode, diagnostics, import/export, and reset.
 struct AdvancedSettingsView: View {
     @EnvironmentObject var settings: AppSettings
-
-    @State private var showExportPicker = false
-    @State private var showImportPicker = false
-    @State private var showBackupPicker = false
-    @State private var showRestorePicker = false
 
     var body: some View {
         Form {
@@ -26,27 +25,8 @@ struct AdvancedSettingsView: View {
 
             Section {
                 HStack {
-                    Button("Export Settings") { showExportPicker = true }
-                        .fileExporter(
-                            isPresented: $showExportPicker,
-                            document: nil,
-                            contentType: .json,
-                            defaultFilename: "JacqueCopy-Settings.json"
-                        ) { result in
-                            if case .success(let url) = result {
-                                try? AppSettings.shared.exportSettings(to: url)
-                            }
-                        }
-
-                    Button("Import Settings") { showImportPicker = true }
-                        .fileImporter(
-                            isPresented: $showImportPicker,
-                            allowedContentTypes: [.json]
-                        ) { result in
-                            if case .success(let url) = result {
-                                try? AppSettings.shared.importSettings(from: url)
-                            }
-                        }
+                    Button("Export Settings") { exportSettings() }
+                    Button("Import Settings") { importSettings() }
                 }
             } header: {
                 Label("Import & Export", systemImage: "arrow.up.arrow.down")
@@ -54,27 +34,8 @@ struct AdvancedSettingsView: View {
 
             Section {
                 HStack {
-                    Button("Backup History") { showBackupPicker = true }
-                        .fileExporter(
-                            isPresented: $showBackupPicker,
-                            document: nil,
-                            contentType: .json,
-                            defaultFilename: "JacqueCopy-Backup-\(Date().ISO8601Format()).json"
-                        ) { result in
-                            if case .success(let url) = result {
-                                try? ClipboardEngine.shared.exportHistory(to: url)
-                            }
-                        }
-
-                    Button("Restore History") { showRestorePicker = true }
-                        .fileImporter(
-                            isPresented: $showRestorePicker,
-                            allowedContentTypes: [.json]
-                        ) { result in
-                            if case .success(let url) = result {
-                                try? ClipboardEngine.shared.importHistory(from: url)
-                            }
-                        }
+                    Button("Backup History") { backupHistory() }
+                    Button("Restore History") { restoreHistory() }
                 }
             } header: {
                 Label("Backup", systemImage: "externaldrive.badge.timemachine")
@@ -90,4 +51,57 @@ struct AdvancedSettingsView: View {
         }
         .formStyle(.grouped)
     }
+
+    // MARK: - Import / Export Actions
+
+    private func exportSettings() {
+        #if os(macOS)
+        if let url = presentSavePanel(defaultName: "JacqueCopy-Settings.json") {
+            try? AppSettings.shared.exportSettings(to: url)
+        }
+        #endif
+    }
+
+    private func importSettings() {
+        #if os(macOS)
+        if let url = presentOpenPanel() {
+            try? AppSettings.shared.importSettings(from: url)
+        }
+        #endif
+    }
+
+    private func backupHistory() {
+        #if os(macOS)
+        let name = "JacqueCopy-Backup-\(Date().ISO8601Format()).json"
+        if let url = presentSavePanel(defaultName: name) {
+            try? ClipboardEngine.shared.exportHistory(to: url)
+        }
+        #endif
+    }
+
+    private func restoreHistory() {
+        #if os(macOS)
+        if let url = presentOpenPanel() {
+            try? ClipboardEngine.shared.importHistory(from: url)
+        }
+        #endif
+    }
+
+    #if os(macOS)
+    private func presentSavePanel(defaultName: String) -> URL? {
+        let panel = NSSavePanel()
+        panel.allowedContentTypes = [.json]
+        panel.nameFieldStringValue = defaultName
+        panel.canCreateDirectories = true
+        return panel.runModal() == .OK ? panel.url : nil
+    }
+
+    private func presentOpenPanel() -> URL? {
+        let panel = NSOpenPanel()
+        panel.allowedContentTypes = [.json]
+        panel.allowsMultipleSelection = false
+        panel.canChooseDirectories = false
+        return panel.runModal() == .OK ? panel.url : nil
+    }
+    #endif
 }
