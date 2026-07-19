@@ -39,7 +39,28 @@
       "Bash(awk '{print $6}')",
       "Bash(desktop-file-validate __TRACKED_VAR__/usr/share/applications/jacque-copy.desktop)",
       "Bash(PYTHONPATH=__TRACKED_VAR__/usr/lib/jacque-copy python3 -c 'import jacquecopy, jacquecopy.app, jacquecopy.engine, jacquecopy.ui.window; print\\('\\\\''installed package imports OK, version'\\\\'', jacquecopy.__version__\\)')",
-      "Bash(gh workflow *)"
+      "Bash(gh workflow *)",
+      "Bash(pkill -f \"jacque-copy\")",
+      "Bash(rm -f ~/.config/jacque-copy/settings.json)",
+      "Bash(cd /home/johnnylaine/Documents/GitHub/Multi-Copy/linux && rm -f ~/.config/jacque-copy/settings.json && echo \"config removed\")",
+      "Bash(dpkg-deb --fsys-tarfile dist/jacque-copy_1.0.0_all.deb)",
+      "Bash(tar -xO ./usr/lib/jacque-copy/jacquecopy/settings.py)",
+      "Bash(sudo -n true)",
+      "Bash(dpkg -l jacque-copy)",
+      "Bash(DISPLAY=:0 pkexec sh -c 'dpkg -i '\\\\''/home/johnnylaine/Documents/GitHub/Multi-Copy/linux/dist/jacque-copy_1.0.0_all.deb'\\\\'' || apt-get -f install -y')",
+      "Bash(echo \"=== exit: $? ===\")",
+      "Bash(DISPLAY=:0 timeout 20 python3 /tmp/claude-1000/-home-johnnylaine-Documents-GitHub-Multi-Copy/6b742808-9747-48df-94e5-73a6bc261a9f/scratchpad/functest2.py)",
+      "Bash(DISPLAY=:0 timeout 12 python3 /tmp/claude-1000/-home-johnnylaine-Documents-GitHub-Multi-Copy/6b742808-9747-48df-94e5-73a6bc261a9f/scratchpad/injtest.py)",
+      "Bash(pkill -f \"scratchpad/functest\")",
+      "Bash(pkill -f \"scratchpad/injtest\")",
+      "Bash(pkill -f \"jacquecopy\")",
+      "Bash(DISPLAY=:0 xdotool search --name \"JCTEST\")",
+      "Bash(DISPLAY=:0 xdotool search --name \"INJTEST\")",
+      "Bash(DISPLAY=:0 timeout 8 python3 /tmp/claude-1000/-home-johnnylaine-Documents-GitHub-Multi-Copy/6b742808-9747-48df-94e5-73a6bc261a9f/scratchpad/iso.py)",
+      "Bash(gsettings list-recursively *)",
+      "Bash(DISPLAY=:0 dconf dump /org/cinnamon/)",
+      "Bash(DISPLAY=:0 python3 /tmp/claude-1000/-home-johnnylaine-Documents-GitHub-Multi-Copy/6b742808-9747-48df-94e5-73a6bc261a9f/scratchpad/hotkey_logger.py)",
+      "Bash(:)"
     ]
   }
 }

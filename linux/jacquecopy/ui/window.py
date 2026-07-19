@@ -47,6 +47,14 @@ def _install_css():
     )
 
 
+def _accel_label(accel):
+    """Turn a GTK accelerator string (e.g. ``<Ctrl><Shift>c``) into ``Ctrl+Shift+C``."""
+    key, mods = Gtk.accelerator_parse(accel)
+    if key == 0:
+        return accel
+    return Gtk.accelerator_get_label(key, mods)
+
+
 def _relative_time(ts):
     delta = max(0, int(time.time() - ts))
     if delta < 60:
@@ -62,6 +70,12 @@ class MainWindow(Gtk.ApplicationWindow):
     def __init__(self, application, engine):
         super().__init__(application=application, title="Jacque-Copy")
         self.engine = engine
+        copy_label = _accel_label(engine.settings.get("hotkey_copy_b"))
+        paste_label = _accel_label(engine.settings.get("hotkey_paste_b"))
+        self._b_hint = f"{copy_label} / {paste_label}"
+        self._status_default = (
+            f"{copy_label} copies the selection to Clipboard B  ·  {paste_label} pastes it"
+        )
         self.set_default_size(460, 620)
         self.set_icon_name("jacque-copy")
         _install_css()
@@ -95,7 +109,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.status = Gtk.Label(xalign=0)
         self.status.get_style_context().add_class("jc-status")
-        self.status.set_text("Alt+C copies the selection to Clipboard B · Alt+V pastes it")
+        self.status.set_text(self._status_default)
         outer.pack_start(self.status, False, False, 0)
 
         self.connect("key-press-event", self._on_key_press)
@@ -110,7 +124,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.card_a_content = Gtk.Label(xalign=0, label="(empty)")
         self.card_b_content = Gtk.Label(xalign=0, label="(empty)")
         row.pack_start(self._card("Clipboard A · system", "Ctrl+C / Ctrl+V", self.card_a_content, "jc-card-a"), True, True, 0)
-        row.pack_start(self._card("Clipboard B · secondary", "Alt+C / Alt+V", self.card_b_content, "jc-card-b"), True, True, 0)
+        row.pack_start(self._card("Clipboard B · secondary", self._b_hint, self.card_b_content, "jc-card-b"), True, True, 0)
         return row
 
     def _card(self, title, hint, content_label, style):
@@ -227,7 +241,7 @@ class MainWindow(Gtk.ApplicationWindow):
     def _flash(self, message):
         self.status.set_text(message)
         GLib.timeout_add_seconds(
-            3, lambda: (self.status.set_text("Alt+C copies the selection to Clipboard B · Alt+V pastes it"), False)[1]
+            3, lambda: (self.status.set_text(self._status_default), False)[1]
         )
 
     def _on_key_press(self, _widget, event):

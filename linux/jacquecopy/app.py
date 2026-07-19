@@ -139,7 +139,7 @@ class JacqueCopyApp(Gtk.Application):
     def _warn_hotkeys(self):
         if self.window:
             self.window.status.set_text(
-                "⚠ Could not register Alt+C / Alt+V — another app may have grabbed them"
+                "⚠ Could not register the Clipboard B shortcuts — another app may have grabbed them"
             )
         return False
 

@@ -18,8 +18,8 @@ DEFAULTS = {
     "restore_clipboard_after_paste": True,
     "start_minimized": False,
     "launch_at_login": False,
-    "hotkey_copy_b": "<Alt>c",
-    "hotkey_paste_b": "<Alt>v",
+    "hotkey_copy_b": "<Ctrl><Shift>c",
+    "hotkey_paste_b": "<Ctrl><Shift>v",
 }
 
 

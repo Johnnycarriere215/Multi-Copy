@@ -25,24 +25,29 @@ class KeyInjector:
         keysym = XK.string_to_keysym(keysym_name)
         return self._display.keysym_to_keycode(keysym)
 
-    def _release_modifiers(self):
-        """Release Alt so a following Ctrl+C/V is not seen as Ctrl+Alt+C/V.
+    def _clear_modifiers(self):
+        """Release every modifier that may be physically held by the hotkey.
 
-        The hotkey (Alt+C / Alt+V) may still be physically held when we inject,
-        so we send synthetic releases for both Alt keys first.
+        The trigger shortcut (e.g. Ctrl+Shift+C) still has its modifiers down
+        when we inject, so a following "Ctrl+C" would be seen as "Ctrl+Shift+C".
+        We synthesise releases for all common modifiers first so the injected
+        combo is clean.
         """
-        for name in ("Alt_L", "Alt_R", "Super_L", "Super_R"):
+        for name in (
+            "Shift_L", "Shift_R", "Control_L", "Control_R",
+            "Alt_L", "Alt_R", "Super_L", "Super_R", "Meta_L", "Meta_R",
+        ):
             code = self._keycode(name)
             if code:
                 xtest.fake_input(self._display, X.KeyRelease, code)
         self._display.sync()
 
     def send_ctrl(self, letter):
-        """Send Ctrl+<letter> (e.g. ``"c"`` or ``"v"``) to the focused window."""
+        """Send a clean Ctrl+<letter> (e.g. ``"c"`` or ``"v"``) to the focused window."""
         if not self._display:
             return False
         try:
-            self._release_modifiers()
+            self._clear_modifiers()
             ctrl = self._keycode("Control_L")
             key = self._keycode(letter)
             xtest.fake_input(self._display, X.KeyPress, ctrl)
