@@ -8,7 +8,7 @@ let macDependencies: [Package.Dependency] = []
 let macTargetDependencies: [Target.Dependency] = []
 #else
 let macDependencies: [Package.Dependency] = [
-    .package(url: "https://github.com/sindresorhus/KeyboardShortcuts.git", from: "2.0.1"),
+    .package(url: "https://github.com/sindresorhus/KeyboardShortcuts.git", from: "3.0.1"),
     .package(url: "https://github.com/sparkle-project/Sparkle.git", from: "2.6.4")
 ]
 let macTargetDependencies: [Target.Dependency] = [
